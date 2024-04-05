@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider,  } from '@tanstack/react-query';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './src/screens/Login';
 import { HomeScreen } from './src/screens/Home';
-import CartScreen from './src/screens/Cart';
+import ProductCard from './src/screens/Cart';
 
 
 
@@ -38,7 +38,7 @@ function App(): React.JSX.Element {
         <Stack.Screen
           options={{headerShown: false}}
           name="cart"
-          component={CartScreen}
+          component={ProductCard}
         />
 
         

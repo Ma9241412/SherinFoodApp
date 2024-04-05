@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 export const Products = ({selectedCategoryId}) => {
-  console.log('Id comming', selectedCategoryId);
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,7 +27,6 @@ export const Products = ({selectedCategoryId}) => {
         const response = await axios.get(
           'http://192.168.18.13:8000/api/v1/product/get-products',
         );
-        // Filter the products that match the selected category ID
         const filteredProducts = response.data.products.filter(
           product => product.category._id === selectedCategoryId,
         );

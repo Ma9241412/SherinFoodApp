@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 
 import {Products} from '../components/Products';
+import {HeaderComp} from '../components/Header';
 
 export const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -65,32 +66,35 @@ export const HomeScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.searchContainer}>
-        <Icon name="search" size={20} style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search for dishes..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
-      {loading ? (
-        <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color="#F17547" />
+    <View style={styles.container}>
+      <HeaderComp />
+      <ScrollView>
+        <View style={styles.searchContainer}>
+          <Icon name="search" size={20} style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search for dishes..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
         </View>
-      ) : (
-        <FlatList
-          horizontal
-          data={categories}
-          renderItem={renderCategoryItem}
-          keyExtractor={item => item._id}
-          extraData={selectedCategoryId}
-          showsHorizontalScrollIndicator={false}
-        />
-      )}
-      <Products selectedCategoryId={selectedCategoryId} />
-    </ScrollView>
+        {loading ? (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color="#F17547" />
+          </View>
+        ) : (
+          <FlatList
+            horizontal
+            data={categories}
+            renderItem={renderCategoryItem}
+            keyExtractor={item => item._id}
+            extraData={selectedCategoryId}
+            showsHorizontalScrollIndicator={false}
+          />
+        )}
+        <Products selectedCategoryId={selectedCategoryId} />
+      </ScrollView>
+    </View>
   );
 };
 
