@@ -1,72 +1,44 @@
-import React, { useState } from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {
-  StyleSheet,
- useColorScheme,
-} from 'react-native';
-import { QueryClient, QueryClientProvider,  } from '@tanstack/react-query';
+
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './src/screens/Login';
-import { HomeScreen } from './src/screens/Home';
-import ProductCard from './src/screens/Cart';
+import TabNavigator from './src/navigation/TabNavigator';
+import { AuthProvider, useAuth } from './src/AuthContext';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import DetailsScreen from './src/screens/ProductDetails';
+import InvoiceScreen from './src/screens/Invoice';
+import UserDetailsScreen from './src/screens/UserDetails';
 
+const Stack = createNativeStackNavigator();
 
-
-function App(): React.JSX.Element {
-  const [initialRoute, setInitialRoute] = useState('login');
-  const Stack = createNativeStackNavigator();
-  const queryClient = new QueryClient();
-
-  const isDarkMode = useColorScheme() === 'dark';
-
-
+function App() {
+  const { isAuthenticated } = useAuth();
 
   return (
-    <QueryClientProvider client={queryClient}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={initialRoute}>
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="login"
-          component={LoginScreen}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="home"
-          component={HomeScreen}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="cart"
-          component={ProductCard}
-        />
+      {isAuthenticated ? (
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
+          <Stack.Screen name="Details" component={DetailsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="invoice" component={InvoiceScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="userdetails" component={UserDetailsScreen} options={{ headerShown: false }} />
 
-        
-      
-      </Stack.Navigator>
+
+          {/* You can add more screens here */}
+        </Stack.Navigator>
+      ) : (
+        <LoginScreen />
+      )}
     </NavigationContainer>
-  </QueryClientProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-    backgroundColor:"white"
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+function AppWrapper() {
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
+}
 
-export default App;
+export default AppWrapper;

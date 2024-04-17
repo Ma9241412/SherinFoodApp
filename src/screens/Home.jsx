@@ -47,21 +47,23 @@ export const HomeScreen = () => {
   const renderCategoryItem = ({item}) => {
     const isSelected = item._id === selectedCategoryId;
     return (
-      <TouchableOpacity
-        onPress={() => setSelectedCategoryId(item._id)}
-        style={[
-          styles.categoryCard,
-          isSelected && styles.categoryCardSelected,
-        ]}>
-        <Image source={{uri: item.image}} style={styles.categoryImage} />
-        <Text
+      <View>
+        <TouchableOpacity
+          onPress={() => setSelectedCategoryId(item._id)}
           style={[
-            styles.categoryText,
-            isSelected && styles.categoryTextSelected,
+            styles.categoryCard,
+            isSelected && styles.categoryCardSelected,
           ]}>
-          {item.name}
-        </Text>
-      </TouchableOpacity>
+          <Image source={{uri: item.image}} style={styles.categoryImage} />
+          <Text
+            style={[
+              styles.categoryText,
+              isSelected && styles.categoryTextSelected,
+            ]}>
+            {item.name}
+          </Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -69,29 +71,45 @@ export const HomeScreen = () => {
     <View style={styles.container}>
       <HeaderComp />
       <ScrollView>
-        <View style={styles.searchContainer}>
-          <Icon name="search" size={20} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search for dishes..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
+        <View
+          style={{
+            marginTop: 20,
+            marginLeft: 15,
+            marginBottom: 15,
+            fontFamily: 'Outfit-ExtraBold',
+          }}>
+          <Text
+            style={{fontSize: 30, color: 'black', fontFamily: 'Outfit-Medium'}}>
+            Categories
+          </Text>
         </View>
         {loading ? (
           <View style={styles.loaderContainer}>
             <ActivityIndicator size="large" color="#F17547" />
           </View>
         ) : (
-          <FlatList
-            horizontal
-            data={categories}
-            renderItem={renderCategoryItem}
-            keyExtractor={item => item._id}
-            extraData={selectedCategoryId}
-            showsHorizontalScrollIndicator={false}
-          />
+          <View>
+            <FlatList
+              horizontal
+              data={categories}
+              renderItem={renderCategoryItem}
+              keyExtractor={item => item._id}
+              extraData={selectedCategoryId}
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
         )}
+        <Text
+          style={{
+            fontSize: 30,
+            color: 'black',
+            fontFamily: 'Outfit-Medium',
+            marginLeft: 14,
+            marginTop: 10,
+          }}>
+          Featured Food
+        </Text>
+
         <Products selectedCategoryId={selectedCategoryId} />
       </ScrollView>
     </View>
@@ -127,7 +145,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 40,
     margin: 10,
     padding: 10,
     shadowColor: '#000',
@@ -135,24 +153,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 4.5,
     elevation: 6,
-    width: 100,
+    width: 65,
     height: 100,
   },
   categoryImage: {
-    width: 50,
-    height: 50,
+    width: 30,
+    height: 30,
     marginBottom: 5,
     borderRadius: 100,
   },
   categoryText: {
     color: 'black',
+    fontSize: 8,
+    fontFamily: 'Outfit-Black',
   },
   categoryTextSelected: {
     color: 'white',
   },
   foodItemCard: {
     backgroundColor: 'white',
-
     borderRadius: 10,
     margin: 10,
     padding: 15,
@@ -193,7 +212,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   categoryCardSelected: {
-    backgroundColor: '#F17547', // Style for when a category is selected
+    backgroundColor: '#F17547',
   },
   loaderContainer: {
     flex: 1,

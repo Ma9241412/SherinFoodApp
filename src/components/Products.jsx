@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   StyleSheet,
@@ -15,10 +16,8 @@ export const Products = ({selectedCategoryId}) => {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const handleAddProduct = () => {
-    navigation.navigate('cart');
-  };
+  const [noProductsMessage, setNoProductsMessage] = useState('');
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -30,7 +29,16 @@ export const Products = ({selectedCategoryId}) => {
         const filteredProducts = response.data.products.filter(
           product => product.category._id === selectedCategoryId,
         );
-        setProducts(filteredProducts);
+        if (filteredProducts.length > 0) {
+          setProducts(filteredProducts);
+        } else {
+          // Instead of setting a message, display an alert
+          Alert.alert(
+            'No Items Available',
+            'There are no available items in this category',
+            [{text: 'OK'}],
+          );
+        }
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -43,27 +51,35 @@ export const Products = ({selectedCategoryId}) => {
     }
   }, [selectedCategoryId]);
 
-  const renderFoodItem = ({item}) => (
-    <View style={styles.foodItemCard}>
-      <Image
-        source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
-        style={styles.foodItemImage}
-      />
-      <View style={styles.cardContent}>
-        <Text style={styles.foodItemName}>{item.name}</Text>
-        <Text style={styles.foodItemDescription}>{item.description}</Text>
-        <Text style={styles.foodItemPrice}>${item.price}</Text>
-      </View>
-      <TouchableOpacity style={styles.favIcon}>
-        <Icon name="heart-o" size={20} color="#FFC107" />
+  const renderFoodItem = ({item}) => {
+    const handlePress = () => {
+      navigation.navigate('Details', {item});
+    };
+    return (
+      <TouchableOpacity onPress={handlePress}>
+        <View style={styles.foodItemCard}>
+          <Image
+            source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
+            style={styles.foodItemImage}
+          />
+          <View style={styles.deliveryTime}>
+            <Text style={styles.timeText}>25-30 min</Text>
+          </View>
+          <TouchableOpacity style={styles.favIcon}>
+            <Icon name="heart-o" size={20} color="#FFC107" />
+          </TouchableOpacity>
+          <View style={styles.cardContent}>
+            <Text style={styles.foodItemName}>{item.name}</Text>
+            <View style={styles.footer}>
+              <Icon name="star" size={16} color="#FFC107" />
+              <Text style={styles.ratingText}>4.7</Text>
+              <Text style={styles.categoryText}>Rs.{item.price}</Text>
+            </View>
+          </View>
+        </View>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.addToCartButton}
-        onPress={() => handleAddProduct(item._id)}>
-        <Icon name="plus" size={18} color="#FFFFFF" />
-      </TouchableOpacity>
-    </View>
-  );
+    );
+  };
 
   if (loading) {
     return (
@@ -84,70 +100,68 @@ export const Products = ({selectedCategoryId}) => {
 
 const styles = StyleSheet.create({
   foodItemCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 20,
     margin: 10,
-    padding: 15,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 8,
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+    elevation: 3,
   },
-
   foodItemImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginRight: 10,
+    width: '100%',
+    height: 150,
   },
-  cardContent: {
-    flex: 1,
-  },
-  addToCartButton: {
+  deliveryTime: {
     position: 'absolute',
-    bottom: 10,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    padding: 6,
+    borderTopRightRadius: 4,
+    borderBottomLeftRadius: 20,
     right: 10,
+    top: '82%',
+  },
+  timeText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   favIcon: {
     position: 'absolute',
-    top: 10,
     right: 10,
+    top: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 8,
   },
-  foodItemDescription: {
-    color: '#555',
-    marginBottom: 5,
-    color: 'black',
-  },
-  foodItemPrice: {
-    color: '#000',
-    fontSize: 16,
-    fontWeight: '900',
-    fontFamily: 'Outfit-Black',
-  },
-  addToCartButton: {
-    backgroundColor: '#F17547',
-    borderRadius: 30,
-    marginTop: 40,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  addToCartButtonText: {
-    textAlign: 'center',
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontFamily: 'Outfit-Regular',
+  cardContent: {
+    padding: 10,
   },
   foodItemName: {
-    color: 'black',
-    fontSize: 20,
-    fontFamily: 'Outfit-SemiBold',
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
+  footer: {
+    flexDirection: 'row',
     alignItems: 'center',
+  },
+  ratingText: {
+    fontSize: 16,
+    color: '#FFC107',
+    fontWeight: '600',
+    marginLeft: 5,
+  },
+  categoryText: {
+    fontSize: 16,
+    color: '#555',
+    marginLeft: 10,
+  },
+  priceRange: {
+    fontSize: 16,
+    color: '#555',
+    marginLeft: 10,
   },
 });

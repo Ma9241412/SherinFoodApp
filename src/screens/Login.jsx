@@ -7,14 +7,16 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {useAuth} from '../AuthContext';
 
 const LoginScreen = () => {
+  const {setIsAuthenticated} = useAuth();
   const navigation = useNavigation();
   const handleLogin = () => {
-    navigation.navigate('home');
+    setIsAuthenticated(true);
   };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}> Sherin Huts</Text>
