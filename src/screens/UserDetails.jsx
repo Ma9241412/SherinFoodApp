@@ -34,7 +34,6 @@ const UserDetailsScreen = ({route, navigation}) => {
       return;
     }
 
-    // Replace this part with the actual order submission logic
     console.log('Order Details:', {
       cartItems,
       total,
@@ -42,7 +41,7 @@ const UserDetailsScreen = ({route, navigation}) => {
     });
 
     Alert.alert('Success', 'Your order has been placed.', [
-      {text: 'OK', onPress: () => navigation.navigate('OrderConfirmation')}, // Navigate to confirmation screen or back to cart
+      {text: 'OK', onPress: () => navigation.navigate('OrderConfirmation')},
     ]);
   };
 
@@ -92,7 +91,7 @@ const UserDetailsScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: '#FFFFFF',
   },
   inputContainer: {
     paddingHorizontal: 20,
