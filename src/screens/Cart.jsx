@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const CartScreen = ({route, navigation}) => {
   const [cartItems, setCartItems] = useState([]);
@@ -52,7 +53,7 @@ const CartScreen = ({route, navigation}) => {
   const removeItem = itemId => {
     const updatedCartItems = cartItems.filter(item => item._id !== itemId);
     setCartItems(updatedCartItems);
-    AsyncStorage.removeItem('cartItems'); // This line is not necessary as we are updating the AsyncStorage in the useEffect above
+    AsyncStorage.removeItem('cartItems');
   };
 
   const renderItem = ({item}) => (
@@ -62,34 +63,46 @@ const CartScreen = ({route, navigation}) => {
         style={styles.itemImage}
       />
       <View style={styles.itemDetails}>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <View style={styles.quantityContainer}>
-          <TouchableOpacity
-            style={{
-              backgroundColor: 'red',
-              marginRight: 5,
-              width: 30,
-              height: 30,
-            }}
-            onPress={() => decrementQuantity(item._id)}>
-            <Text style={styles.changeQuantity}>-</Text>
-          </TouchableOpacity>
-          <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
-          <TouchableOpacity
-            style={{
-              backgroundColor: 'green',
-              marginLeft: 5,
-              width: 30,
-              height: 30,
-            }}
-            onPress={() => incrementQuantity(item._id)}>
-            <Text style={styles.changeQuantity}>+</Text>
-          </TouchableOpacity>
+        <View>
+          <Text style={styles.itemName}>{item.name}</Text>
+          <Text style={styles.itemPrice}>Rs.{item.price.toFixed(2)}</Text>
+
+          <View style={styles.quantityContainer1}>
+            <View style={styles.quantityContainer}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: 'rgba(255, 99, 71, 0.87)',
+                  paddingHorizontal: 5,
+                  paddingVertical: 4,
+                  borderRadius: 3,
+                }}
+                onPress={() => decrementQuantity(item._id)}>
+                <Icon name="minus" size={20} color="#fff" />
+              </TouchableOpacity>
+              <Text style={styles.itemQuantity}>Qty: {item.quantity}</Text>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: 'rgba(255, 99, 71, 0.87)',
+                  paddingHorizontal: 5,
+                  paddingVertical: 4,
+                  borderRadius: 3,
+                }}
+                onPress={() => incrementQuantity(item._id)}>
+                <Icon name="plus" size={20} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={{
+                backgroundColor: 'rgba(255, 99, 71, 0.87)',
+                paddingHorizontal: 5,
+                paddingVertical: 4,
+                borderRadius: 3,
+              }}
+              onPress={() => removeItem(item._id)}>
+              <Icon name="trash" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
-        <Text style={styles.itemPrice}>Price: Rs.{item.price.toFixed(2)}</Text>
-        <TouchableOpacity onPress={() => removeItem(item._id)}>
-          <Text style={styles.removeItem}>Remove</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -100,7 +113,7 @@ const CartScreen = ({route, navigation}) => {
         data={cartItems}
         renderItem={renderItem}
         keyExtractor={item => item._id.toString()}
-        ListHeaderComponent={<Text style={styles.header}>Your Cart</Text>}
+        ListHeaderComponent={<Text style={styles.header}>My Cart</Text>}
         ListFooterComponent={
           <View>
             <Text style={styles.total}>Total: Rs {total.toFixed(2)}</Text>
@@ -138,51 +151,63 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
     padding: 20,
     textAlign: 'center',
-    color: '#333',
+    color: 'black',
     backgroundColor: 'white',
+    fontFamily: 'Outfit-SemiBold',
   },
   itemContainer: {
     flexDirection: 'row',
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#EAEAEA',
     backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    borderRadius: 10,
+    marginHorizontal: 10,
+    justifyContent: 'center',
   },
   itemImage: {
-    width: 100,
-    height: 100,
+    width: 70,
+    height: 70,
     borderRadius: 10,
     marginRight: 15,
   },
   itemDetails: {
     flex: 1,
     justifyContent: 'center',
+    flexDirection: 'row',
   },
   itemName: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 5,
+    fontFamily: 'Outfit-SemiBold',
+    fontSize: 20,
+    marginBottom: 2,
     color: 'black',
   },
   itemQuantity: {
     fontSize: 18,
     color: 'black',
-    marginBottom: 5,
+    fontFamily: 'Outfit-SemiBold',
+    marginBottom: 2,
   },
   itemPrice: {
     fontSize: 18,
     color: 'black',
+    fontFamily: 'Outfit-SemiBold',
   },
   total: {
     fontSize: 22,
-    fontWeight: 'bold',
     color: '#E44C4C',
     textAlign: 'center',
     padding: 20,
+    fontFamily: 'Outfit-SemiBold',
   },
   checkoutButton: {
     backgroundColor: '#FF6347',
@@ -208,8 +233,14 @@ const styles = StyleSheet.create({
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    marginTop: 10,
+    gap: 4,
+  },
+  quantityContainer1: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 2,
+    justifyContent: 'space-between',
   },
   changeQuantity: {
     fontWeight: 'bold',
@@ -219,7 +250,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   removeItem: {
-    marginTop: 5,
+    marginTop: 2,
     color: 'red',
     fontSize: 18,
   },

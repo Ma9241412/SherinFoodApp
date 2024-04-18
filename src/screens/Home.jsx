@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
-  TextInput,
   FlatList,
   Text,
   TouchableOpacity,
@@ -10,7 +9,6 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 
 import {Products} from '../components/Products';
@@ -20,7 +18,6 @@ export const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -30,7 +27,6 @@ export const HomeScreen = () => {
           'http://192.168.18.13:8000/api/v1/category/get-category',
         );
         setCategories(response.data.category);
-        // Set the first category as selected by default
         if (response.data.category.length > 0) {
           setSelectedCategoryId(response.data.category[0]._id);
         }
@@ -145,7 +141,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
-    borderRadius: 40,
+    borderRadius: 20,
     margin: 10,
     padding: 10,
     shadowColor: '#000',
@@ -153,19 +149,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 4.5,
     elevation: 6,
-    width: 65,
+    width: 85,
     height: 100,
   },
   categoryImage: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     marginBottom: 5,
     borderRadius: 100,
   },
   categoryText: {
     color: 'black',
-    fontSize: 8,
-    fontFamily: 'Outfit-Black',
+    fontSize: 12,
+    fontFamily: 'Outfit-SemiBold',
   },
   categoryTextSelected: {
     color: 'white',

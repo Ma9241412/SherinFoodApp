@@ -6,6 +6,7 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useAuth} from '../AuthContext';
@@ -19,11 +20,11 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}> Sherin Huts</Text>
+      <Text style={styles.header}>Welcome to {'\n'} Sherin Huts</Text>
 
       <View style={styles.inputContainer}>
         <Icon name="user" style={styles.icon} />
-        <TextInput style={styles.input} placeholder="Username" />
+        <TextInput style={styles.input} placeholder="Email" />
       </View>
 
       <View style={styles.inputContainer}>
@@ -57,20 +58,12 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 34,
-    color: 'red',
+    color: '#FF6347',
     marginBottom: 30,
     fontWeight: 'bold',
     fontFamily: 'Avenir Next',
   },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '80%',
-    marginVertical: 10,
-  },
-  icon: {
-    marginRight: 10,
-  },
+
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -85,11 +78,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 5,
+    height: 45,
   },
   icon: {
     marginRight: 10,
     fontSize: 20,
-    color: 'red',
+    color: '#FF6347',
   },
   input: {
     flex: 1,
@@ -98,20 +92,20 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 5,
   },
   forgotPassword: {
-    color: 'red',
+    color: '#FF6347',
     width: '80%',
     textAlign: 'right',
     marginBottom: 10,
   },
   register: {
     position: 'absolute',
-    color: 'red',
+    color: '#FF6347',
     bottom: 10,
     width: '100%',
     textAlign: 'center',
   },
   button: {
-    backgroundColor: 'red',
+    backgroundColor: '#FF6347',
     borderRadius: 10,
     width: '80%',
     height: 50,

@@ -30,9 +30,12 @@ export const Products = ({selectedCategoryId}) => {
           product => product.category._id === selectedCategoryId,
         );
         if (filteredProducts.length > 0) {
-          setProducts(filteredProducts);
+          const updatedProducts = filteredProducts.map(item => {
+            const {category, ...rest} = item; // Destructure category and get rest of the properties
+            return rest; // Return an object without the category property
+          });
+          setProducts(updatedProducts);
         } else {
-          // Instead of setting a message, display an alert
           Alert.alert(
             'No Items Available',
             'There are no available items in this category',
@@ -51,12 +54,15 @@ export const Products = ({selectedCategoryId}) => {
     }
   }, [selectedCategoryId]);
 
+  const handlePress = item => {
+    console.log(item);
+    navigation.navigate('Details', {item: item});
+  };
+
   const renderFoodItem = ({item}) => {
-    const handlePress = () => {
-      navigation.navigate('Details', {item});
-    };
+    console.log(item);
     return (
-      <TouchableOpacity onPress={handlePress}>
+      <TouchableOpacity onPress={() => handlePress(item)}>
         <View style={styles.foodItemCard}>
           <Image
             source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
@@ -66,14 +72,23 @@ export const Products = ({selectedCategoryId}) => {
             <Text style={styles.timeText}>25-30 min</Text>
           </View>
           <TouchableOpacity style={styles.favIcon}>
-            <Icon name="heart-o" size={20} color="#FFC107" />
+            <Icon name="heart-o" size={20} color="#FFF" />
           </TouchableOpacity>
           <View style={styles.cardContent}>
             <Text style={styles.foodItemName}>{item.name}</Text>
             <View style={styles.footer}>
               <Icon name="star" size={16} color="#FFC107" />
               <Text style={styles.ratingText}>4.7</Text>
-              <Text style={styles.categoryText}>Rs.{item.price}</Text>
+              <View
+                style={{
+                  backgroundColor: '#F17547',
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  marginLeft: 10,
+                  borderRadius: 5,
+                }}>
+                <Text style={styles.categoryText}>Rs.{item.price}</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -117,22 +132,23 @@ const styles = StyleSheet.create({
   deliveryTime: {
     position: 'absolute',
     backgroundColor: 'rgba(0,0,0,0.6)',
-    padding: 6,
-    borderTopRightRadius: 4,
-    borderBottomLeftRadius: 20,
+    borderRadius: 5,
     right: 10,
-    top: '82%',
+    top: '47%',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   timeText: {
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
+    fontFamily: 'Outfit-Medium',
   },
   favIcon: {
     position: 'absolute',
     right: 10,
     top: 10,
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     borderRadius: 20,
     padding: 8,
   },
@@ -140,24 +156,25 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   foodItemName: {
-    fontSize: 22,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontFamily: 'Outfit-Medium',
     marginBottom: 5,
+    color: 'black',
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   ratingText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#FFC107',
-    fontWeight: '600',
+    fontFamily: 'Outfit-Medium',
     marginLeft: 5,
   },
   categoryText: {
     fontSize: 16,
-    color: '#555',
-    marginLeft: 10,
+    color: 'white',
+    fontFamily: 'Outfit-Medium',
   },
   priceRange: {
     fontSize: 16,

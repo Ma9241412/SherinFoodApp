@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DetailsScreen from './src/screens/ProductDetails';
 import InvoiceScreen from './src/screens/Invoice';
 import UserDetailsScreen from './src/screens/UserDetails';
+import OrderConfirmationScreen from './src/screens/OrderConfirm';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,19 +17,17 @@ function App() {
 
   return (
     <NavigationContainer>
-      {isAuthenticated ? (
+
         <Stack.Navigator>
           <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
           <Stack.Screen name="Details" component={DetailsScreen} options={{ headerShown: false }} />
           <Stack.Screen name="invoice" component={InvoiceScreen} options={{ headerShown: false }} />
           <Stack.Screen name="userdetails" component={UserDetailsScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="success" component={OrderConfirmationScreen} options={{ headerShown: false }} />
 
 
-          {/* You can add more screens here */}
         </Stack.Navigator>
-      ) : (
-        <LoginScreen />
-      )}
+
     </NavigationContainer>
   );
 }

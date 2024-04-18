@@ -58,7 +58,7 @@ export const HeaderComp = () => {
       </ImageBackground>
       <TextInput
         style={styles.searchInput}
-        placeholder="Hot & Spicy Food"
+        placeholder="Search Hot & Spicy Food ..."
         placeholderTextColor="#8e8e8e"
       />
     </View>
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -86,23 +86,24 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: 'white',
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: 'Outfit-SemiBold',
     textAlign: 'center',
     flex: 1,
   },
   searchInput: {
-    height: 40,
+    height: 50,
     backgroundColor: 'white',
-    borderRadius: 20,
+    borderRadius: 15,
     paddingHorizontal: 15,
     marginHorizontal: 20,
     position: 'absolute',
     bottom: 10,
     left: 10,
+    fontFamily: 'Outfit-Medium',
     right: 10,
   },
   arrow: {
-    padding: 10, // For easier pressing
+    padding: 10,
   },
 });
 

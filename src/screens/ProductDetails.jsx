@@ -32,14 +32,13 @@ const ProductDetailsScreen = ({route, navigation}) => {
       totalPrice: totalPrice,
     };
 
-    // Navigate to CartScreen with the cartItem
     navigation.navigate('cart', {cartItems: [cartItem]});
   };
 
   const totalPrice = (item.price * quantity).toFixed(2);
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBackPress}>
           <Icon name="chevron-left" size={24} color="#000" />
@@ -52,31 +51,48 @@ const ProductDetailsScreen = ({route, navigation}) => {
         source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
         style={styles.image}
       />
-      <View style={styles.quantityContainer}>
-        <TouchableOpacity
-          onPress={() => updateQuantity('decrease')}
-          disabled={quantity <= 1}>
-          <Icon name="minus" size={20} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.quantity}>{quantity}</Text>
-        <TouchableOpacity onPress={() => updateQuantity('increase')}>
-          <Icon name="plus" size={20} color="#000" />
-        </TouchableOpacity>
+      <View style={styles.quantityContainer1}>
+        <Text style={styles.title}>Price: Rs.{totalPrice}</Text>
+        <View style={styles.quantityContainer}>
+          <Text style={styles.title}>Qty: </Text>
+
+          <TouchableOpacity
+            style={{
+              backgroundColor: 'rgba(255, 99, 71, 0.87)',
+              paddingHorizontal: 8,
+              paddingVertical: 4,
+              borderRadius: 3,
+              marginLeft: 4,
+            }}
+            onPress={() => updateQuantity('decrease')}
+            disabled={quantity <= 1}>
+            <Icon name="minus" size={20} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.quantity}>{quantity}</Text>
+          <TouchableOpacity
+            style={{
+              backgroundColor: 'rgba(255, 99, 71, 0.87)',
+              paddingHorizontal: 8,
+              paddingVertical: 4,
+              borderRadius: 3,
+            }}
+            onPress={() => updateQuantity('increase')}>
+            <Icon name="plus" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.details}>
-        <Text style={styles.title}>
-          {item.name} – ₨.{totalPrice}
-        </Text>
+        <Text style={styles.title}>{item.name}</Text>
 
         <Text style={styles.description}>{item.description}</Text>
       </View>
 
       <View style={styles.orderButtonContainer}>
         <TouchableOpacity onPress={handleOrderPress} style={styles.orderButton}>
-          <Text style={styles.orderButtonText}>Proceed </Text>
+          <Text style={styles.orderButtonText}>Add to cart </Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -93,26 +109,35 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'Outfit-SemiBold',
+    color: 'black',
   },
   image: {
     width: '100%',
-    aspectRatio: 1,
-    resizeMode: 'contain',
+    aspectRatio: 0.73,
+    resizeMode: 'cover',
   },
   quantityContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 16,
+  },
+  quantityContainer1: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 10,
+    paddingHorizontal: 10,
   },
   quantity: {
     marginHorizontal: 16,
-    fontSize: 18,
+    fontSize: 24,
+    fontFamily: 'Outfit-Bold',
+    color: 'black',
   },
   details: {
     alignItems: 'center',
-    padding: 16,
+    padding: 10,
   },
   title: {
     fontSize: 24,
@@ -133,7 +158,7 @@ const styles = StyleSheet.create({
   cartInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 16,
+    padding: 10,
   },
   cartItems: {
     fontSize: 16,
@@ -146,6 +171,7 @@ const styles = StyleSheet.create({
   orderButtonContainer: {
     paddingHorizontal: 16,
     marginBottom: 16,
+    backgroundColor: '#FF6347',
   },
   orderButton: {
     backgroundColor: '#FF6347',

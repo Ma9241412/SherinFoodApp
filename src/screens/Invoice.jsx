@@ -62,14 +62,15 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e2e2e2',
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 25,
     color: '#333',
+    fontFamily: 'Outfit-Bold',
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#666',
+    color: 'black',
     marginBottom: 8,
+    fontFamily: 'Outfit-Bold',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -83,36 +84,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   itemName: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#333',
+    fontFamily: 'Outfit-Medium',
+    fontSize: 18,
+    color: 'black',
   },
   itemQuantity: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 16,
+    fontFamily: 'Outfit-Medium',
+    color: 'black',
   },
   itemPrice: {
     fontSize: 16,
-    color: '#333',
-    fontWeight: 'bold',
+    color: 'black',
+    fontFamily: 'Outfit-Medium',
   },
   summary: {
     padding: 16,
   },
   summaryText: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 18,
+    color: 'black',
+    fontFamily: 'Outfit-Medium',
   },
   summaryPrice: {
     fontSize: 16,
-    color: '#333',
-    fontWeight: 'bold',
+    color: 'black',
+    fontFamily: 'Outfit-Medium',
     marginBottom: 8,
   },
   totalLabel: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#e44c4c',
+    color: 'black',
+    fontFamily: 'Outfit-Medium',
     marginTop: 10,
   },
   totalPrice: {
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 18,
-    fontFamily: 'Outfit-Regular',
+    fontFamily: 'Outfit-Medium',
   },
 });
 
