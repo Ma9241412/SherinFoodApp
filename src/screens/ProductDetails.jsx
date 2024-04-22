@@ -6,8 +6,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProductDetailsScreen = ({route, navigation}) => {
   const {item} = route.params;
@@ -25,16 +27,37 @@ const ProductDetailsScreen = ({route, navigation}) => {
     });
   };
 
-  const handleOrderPress = () => {
-    const cartItem = {
-      ...item,
-      quantity: quantity,
-      totalPrice: totalPrice,
-    };
+  const handleOrderPress = async newItem => {
+    try {
+      const existingCart = await AsyncStorage.getItem('cartItems');
+      let cart = existingCart ? JSON.parse(existingCart) : [];
 
-    navigation.navigate('cart', {cartItems: [cartItem]});
+      if (newItem._id === undefined) {
+        console.error('New item does not have an _id:', newItem);
+        ToastAndroid.show(
+          'Cannot add item without ID to cart',
+          ToastAndroid.LONG,
+        );
+        return;
+      }
+
+      cart.push({
+        ...newItem,
+        totalPrice: (newItem.price * newItem.quantity).toFixed(2),
+      });
+
+      await AsyncStorage.setItem('cartItems', JSON.stringify(cart));
+
+      console.log('Updated cart:', cart);
+
+      ToastAndroid.show('Item Added Successfully to Cart', ToastAndroid.SHORT);
+
+      navigation.goBack();
+    } catch (error) {
+      console.error('Failed to add item to cart:', error);
+      ToastAndroid.show('Failed to add item to cart', ToastAndroid.LONG);
+    }
   };
-
   const totalPrice = (item.price * quantity).toFixed(2);
 
   return (
@@ -88,7 +111,9 @@ const ProductDetailsScreen = ({route, navigation}) => {
       </View>
 
       <View style={styles.orderButtonContainer}>
-        <TouchableOpacity onPress={handleOrderPress} style={styles.orderButton}>
+        <TouchableOpacity
+          onPress={() => handleOrderPress(item)}
+          style={styles.orderButton}>
           <Text style={styles.orderButtonText}>Add to cart </Text>
         </TouchableOpacity>
       </View>

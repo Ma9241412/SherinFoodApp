@@ -13,11 +13,22 @@ import axios from 'axios';
 
 import {Products} from '../components/Products';
 import {HeaderComp} from '../components/Header';
+import MainHeader from '../components/MainHeader';
+import Sidebar from '../components/SideBar';
 
-export const HomeScreen = () => {
+export const HomeScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible);
+  };
+
+  const navigateToCart = () => {
+    navigation.navigate('Cart');
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -65,7 +76,10 @@ export const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      <MainHeader onMenuPress={toggleSidebar} onCartPress={navigateToCart} />
+      <Sidebar visible={sidebarVisible} onClose={toggleSidebar} />
       <HeaderComp />
+
       <ScrollView>
         <View
           style={{

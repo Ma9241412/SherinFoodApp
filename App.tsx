@@ -9,6 +9,8 @@ import DetailsScreen from './src/screens/ProductDetails';
 import InvoiceScreen from './src/screens/Invoice';
 import UserDetailsScreen from './src/screens/UserDetails';
 import OrderConfirmationScreen from './src/screens/OrderConfirm';
+import { HomeScreen } from './src/screens/Home';
+import CartScreen from './src/screens/Cart';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,9 +19,10 @@ function App() {
 
   return (
     <NavigationContainer>
-
+      {/* {isAuthenticated ? ( */}
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
+          <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: true }} />
           <Stack.Screen name="Details" component={DetailsScreen} options={{ headerShown: false }} />
           <Stack.Screen name="invoice" component={InvoiceScreen} options={{ headerShown: false }} />
           <Stack.Screen name="userdetails" component={UserDetailsScreen} options={{ headerShown: false }} />
