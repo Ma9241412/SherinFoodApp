@@ -22,6 +22,7 @@ const UserDetailsScreen = ({route, navigation}) => {
     phone: '',
     address: '',
   });
+  console.log('test', cartItems);
 
   const handleInputChange = (name, value) => {
     setUserDetails({...userDetails, [name]: value.trim()});
@@ -59,7 +60,7 @@ const UserDetailsScreen = ({route, navigation}) => {
           },
         },
       );
-      console.log('API Response', response.data);
+      console.log('products', response.data);
       setTimeout(() => {
         setIsLoading(false);
         if (response.status === 200 || response.status === 201) {

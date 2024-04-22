@@ -1,65 +1,67 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ImageBackground,
   TextInput,
-  TouchableOpacity,
+  Animated,
+  Dimensions,
+  Platform,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+
+const {width: windowWidth} = Dimensions.get('window');
 
 export const HeaderComp = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const scrollX = useRef(new Animated.Value(0)).current;
   const headerData = [
     {
-      title: 'New and popular at Sherin Huts - Dish 1',
       image: require('../assets/cat1.jpg'),
     },
     {
-      title: 'New and popular at Sherin Huts - Dish 2',
       image: require('../assets/cat3.jpg'),
     },
     {
-      title: 'New and popular at Sherin Huts - Dish 3',
       image: require('../assets/cat4.jpg'),
     },
   ];
 
-  const handleArrowPress = direction => {
-    setCurrentImageIndex(prevIndex => {
-      return direction === 'left'
-        ? (prevIndex + headerData.length - 1) % headerData.length
-        : (prevIndex + 1) % headerData.length;
-    });
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextIndex = (currentImageIndex + 1) % headerData.length;
+
+      Animated.spring(scrollX, {
+        toValue: -nextIndex * windowWidth,
+        useNativeDriver: true,
+      }).start();
+
+      setCurrentImageIndex(nextIndex);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [currentImageIndex]);
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={headerData[currentImageIndex].image}
-        style={styles.headerContainer}
-        resizeMode="cover">
-        <View style={styles.overlay}>
-          <TouchableOpacity
-            onPress={() => handleArrowPress('left')}
-            style={styles.arrow}>
-            <Icon name="chevron-left" size={30} color="white" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>
-            {headerData[currentImageIndex].title}
-          </Text>
-          <TouchableOpacity
-            onPress={() => handleArrowPress('right')}
-            style={styles.arrow}>
-            <Icon name="chevron-right" size={30} color="white" />
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
+      <Animated.View
+        style={{
+          ...styles.scrollView,
+          width: windowWidth * headerData.length,
+          transform: [{translateX: scrollX}],
+        }}>
+        {headerData.map((item, index) => (
+          <ImageBackground
+            key={index}
+            source={item.image}
+            style={styles.imageBackground}
+            resizeMode="cover"
+          />
+        ))}
+      </Animated.View>
       <TextInput
         style={styles.searchInput}
         placeholder="Search Hot & Spicy Food ..."
-        placeholderTextColor="#8e8e8e"
+        placeholderTextColor="black"
       />
     </View>
   );
@@ -68,42 +70,29 @@ export const HeaderComp = () => {
 const styles = StyleSheet.create({
   container: {
     height: 200,
+    position: 'relative',
+    overflow: 'hidden',
   },
-  headerContainer: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+  scrollView: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
   },
-  headerTitle: {
-    color: 'white',
-    fontSize: 24,
-    fontFamily: 'Outfit-SemiBold',
-    textAlign: 'center',
-    flex: 1,
+  imageBackground: {
+    width: windowWidth,
+    height: 200,
   },
   searchInput: {
-    height: 50,
-    backgroundColor: 'white',
-    borderRadius: 15,
+    height: 40,
+    borderRadius: 7,
     paddingHorizontal: 15,
     marginHorizontal: 20,
     position: 'absolute',
-    bottom: 10,
+    top: 140,
     left: 10,
-    fontFamily: 'Outfit-Medium',
     right: 10,
-  },
-  arrow: {
-    padding: 10,
+    fontFamily: Platform.OS === 'ios' ? 'Outfit-Medium' : 'sans-serif-medium',
+    opacity: 0.5,
+    borderWidth: 1,
+    borderColor: 'black',
   },
 });
 
