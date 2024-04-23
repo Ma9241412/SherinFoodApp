@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  ToastAndroid,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -78,9 +80,52 @@ const CartScreen = ({navigation}) => {
   };
 
   const keyExtractor = item => {
-    // Check if the item and its _id are defined, otherwise provide a fallback
     return item && item._id ? item._id.toString() : `item-${Math.random()}`;
   };
+
+  const proceedToCheckout = async () => {
+    try {
+      const userDetails = await AsyncStorage.getItem('userDetails');
+
+      const navigateToInvoice = async () => {
+        navigation.navigate('invoice', {cartItems, total});
+        await AsyncStorage.removeItem('cartItems');
+        setCartItems([]);
+        setTotal(0);
+        ToastAndroid.show('Continuing as guest', ToastAndroid.SHORT);
+      };
+
+      const navigateToLogin = () => {
+        ToastAndroid.show('Please log in', ToastAndroid.SHORT);
+        navigation.navigate('Login');
+      };
+
+      // If userDetails exist, go ahead to invoice
+      if (userDetails !== null) {
+        navigateToInvoice();
+      } else {
+        Alert.alert(
+          'Proceed to Checkout',
+          'How would you like to continue?',
+          [
+            {
+              text: 'Continue as Guest',
+              onPress: navigateToInvoice,
+            },
+            {
+              text: 'Login as User',
+              onPress: navigateToLogin,
+            },
+          ],
+          {cancelable: true},
+        );
+      }
+    } catch (error) {
+      console.error('Error during checkout process:', error);
+      ToastAndroid.show('Failed to proceed to checkout', ToastAndroid.LONG);
+    }
+  };
+
   const renderItem = ({item}) => (
     <View style={styles.card}>
       <View style={styles.itemContainer}>
@@ -130,10 +175,7 @@ const CartScreen = ({navigation}) => {
                 cartItems.length === 0 && styles.disabledButton,
               ]}
               activeOpacity={0.7}
-              onPress={() =>
-                cartItems.length > 0 &&
-                navigation.navigate('invoice', {cartItems, total})
-              }
+              onPress={proceedToCheckout}
               disabled={cartItems.length === 0}>
               <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
             </TouchableOpacity>

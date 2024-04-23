@@ -31,8 +31,8 @@ export const Products = ({selectedCategoryId}) => {
         );
         if (filteredProducts.length > 0) {
           const updatedProducts = filteredProducts.map(item => {
-            const {category, ...rest} = item; // Destructure category and get rest of the properties
-            return rest; // Return an object without the category property
+            const {category, ...rest} = item;
+            return rest;
           });
           setProducts(updatedProducts);
         } else {

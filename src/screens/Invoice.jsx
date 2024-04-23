@@ -5,16 +5,71 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const InvoiceScreen = ({route, navigation}) => {
   const {cartItems, total} = route.params;
 
-  const handleOrderNow = () => {
-    navigation.navigate('userdetails', {
-      cartItems: cartItems,
-      total: total,
-    });
+  const handleOrderNow = async () => {
+    try {
+      const userDetails = await AsyncStorage.getItem('userDetails');
+      if (userDetails) {
+        const formattedCartItems = cartItems.map(item => ({
+          ...item,
+          product: item._id,
+        }));
+
+        await AsyncStorage.setItem(
+          'orderDetails',
+          JSON.stringify({
+            userDetails: JSON.parse(userDetails),
+            cartItems: formattedCartItems,
+            total,
+          }),
+        );
+
+        const response = await axios.post(
+          'http://192.168.18.13:8000/api/v1/orders/create-order',
+          {
+            cartItems: formattedCartItems,
+            total: total,
+            userDetails: JSON.parse(userDetails),
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        if (response.status === 200 || response.status === 201) {
+          console.log('Order created successfully:', response.data);
+          ToastAndroid.show('Order Placed Successfully', ToastAndroid.SHORT);
+          navigation.navigate('success');
+        } else {
+          console.error('Order creation failed:', response.data);
+        }
+      } else {
+        navigation.navigate('userdetails', {
+          cartItems: cartItems,
+          total: total,
+        });
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Order creation failed:', error.response.data);
+      } else if (error.request) {
+        console.error(
+          'Order creation failed: No response received',
+          error.request,
+        );
+      } else {
+        console.error('Error:', error.message);
+      }
+    }
   };
 
   return (

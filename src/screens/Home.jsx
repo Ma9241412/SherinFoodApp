@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
-
+import debounce from 'lodash/debounce';
 import {Products} from '../components/Products';
 import {HeaderComp} from '../components/Header';
 import MainHeader from '../components/MainHeader';
@@ -21,6 +21,7 @@ export const HomeScreen = ({navigation}) => {
   const [categories, setCategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
@@ -29,18 +30,17 @@ export const HomeScreen = ({navigation}) => {
   const navigateToCart = () => {
     navigation.navigate('Cart');
   };
-
   useEffect(() => {
     const fetchCategories = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        const response = await axios.get(
-          'http://192.168.18.13:8000/api/v1/category/get-category',
-        );
-        setCategories(response.data.category);
-        if (response.data.category.length > 0) {
-          setSelectedCategoryId(response.data.category[0]._id);
+        let endpoint = 'http://192.168.18.13:8000/api/v1/category/get-category';
+        if (searchTerm) {
+          endpoint += `?search=${encodeURIComponent(searchTerm.trim())}`;
         }
+
+        const response = await axios.get(endpoint);
+        setCategories(response.data.category);
       } catch (error) {
         console.error('Error fetching categories', error);
       } finally {
@@ -49,8 +49,11 @@ export const HomeScreen = ({navigation}) => {
     };
 
     fetchCategories();
-  }, []);
+  }, [searchTerm]);
 
+  const handleSearchChange = newSearchTerm => {
+    setSearchTerm(newSearchTerm);
+  };
   const renderCategoryItem = ({item}) => {
     const isSelected = item._id === selectedCategoryId;
     return (
@@ -78,7 +81,7 @@ export const HomeScreen = ({navigation}) => {
     <View style={styles.container}>
       <MainHeader onMenuPress={toggleSidebar} onCartPress={navigateToCart} />
       <Sidebar visible={sidebarVisible} onClose={toggleSidebar} />
-      <HeaderComp />
+      <HeaderComp searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
       <ScrollView>
         <View

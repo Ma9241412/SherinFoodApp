@@ -21,12 +21,10 @@ const OrderConfirmationScreen = ({navigation}) => {
         />
       </View>
 
-      {/* Success Message */}
       <Text style={styles.successTitle}>Order Successful</Text>
       <Text style={styles.thankYouText}>Thank you!</Text>
       <Text style={styles.subText}>Rider is on his way to your table</Text>
 
-      {/* Action Button */}
       <TouchableOpacity onPress={handlePressBack} style={styles.button}>
         <Text style={styles.buttonText}>Wanna Order More</Text>
       </TouchableOpacity>

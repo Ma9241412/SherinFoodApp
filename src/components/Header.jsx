@@ -11,7 +11,7 @@ import {
 
 const {width: windowWidth} = Dimensions.get('window');
 
-export const HeaderComp = () => {
+export const HeaderComp = ({onSearchChange, searchTerm}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const headerData = [
@@ -41,6 +41,10 @@ export const HeaderComp = () => {
     return () => clearInterval(interval);
   }, [currentImageIndex]);
 
+  const handleInputChange = event => {
+    onSearchChange(event.target.value);
+  };
+
   return (
     <View style={styles.container}>
       <Animated.View
@@ -59,9 +63,11 @@ export const HeaderComp = () => {
         ))}
       </Animated.View>
       <TextInput
+        value={searchTerm}
+        onChange={e => onSearchChange(e.target.value)}
         style={styles.searchInput}
         placeholder="Search Hot & Spicy Food ..."
-        placeholderTextColor="#F17547"
+        placeholderTextColor="black"
       />
     </View>
   );
@@ -79,7 +85,7 @@ const styles = StyleSheet.create({
   imageBackground: {
     width: windowWidth,
     height: 200,
-    opacity: 0.8,
+    opacity: 1,
   },
   searchInput: {
     height: 40,
@@ -91,9 +97,9 @@ const styles = StyleSheet.create({
     left: 10,
     right: 10,
     fontFamily: Platform.OS === 'ios' ? 'Outfit-Medium' : 'sans-serif-medium',
-    opacity: 1,
     borderWidth: 2,
-    borderColor: '#F17547',
+    borderColor: 'white',
+    backgroundColor: 'white',
   },
 });
 
