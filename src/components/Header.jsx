@@ -47,21 +47,6 @@ export const HeaderComp = ({onSearchChange, searchTerm}) => {
 
   return (
     <View style={styles.container}>
-      <Animated.View
-        style={{
-          ...styles.scrollView,
-          width: windowWidth * headerData.length,
-          transform: [{translateX: scrollX}],
-        }}>
-        {headerData.map((item, index) => (
-          <ImageBackground
-            key={index}
-            source={item.image}
-            style={styles.imageBackground}
-            resizeMode="cover"
-          />
-        ))}
-      </Animated.View>
       <TextInput
         value={searchTerm}
         onChange={e => onSearchChange(e.target.value)}

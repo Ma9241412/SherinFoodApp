@@ -160,7 +160,6 @@ const CartScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>My Cart</Text>
       <FlatList
         data={cartItems}
         renderItem={renderItem}
@@ -207,7 +206,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit-SemiBold',
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: '#E5E4E4',
     borderRadius: 8,
     padding: 10,
     marginVertical: 8,

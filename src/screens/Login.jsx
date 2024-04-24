@@ -34,7 +34,6 @@ const LoginScreen = ({navigation}) => {
         const expiryDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
         await AsyncStorage.setItem('token', data.token);
         await AsyncStorage.setItem('tokenExpiry', expiryDate.toString());
-        // Store the complete user details from the login response
         await AsyncStorage.setItem('userDetails', JSON.stringify(data.user));
 
         console.log('Login successful, user details stored:', data.user);
@@ -66,7 +65,7 @@ const LoginScreen = ({navigation}) => {
   }, []);
 
   const navigateToRegister = () => {
-    navigation.navigate('Register'); // Make sure 'Register' matches the name of your registration screen in the navigator config
+    navigation.navigate('Register');
   };
   const handleGuest = () => {
     navigation.navigate('Home');
@@ -75,10 +74,10 @@ const LoginScreen = ({navigation}) => {
   return (
     <>
       <View style={styles.container}>
-        <Text style={styles.header}>Welcome to {'\n'} Sherin Huts</Text>
+        <Text style={styles.header}>Welcome Back!</Text>
+        <Text style={styles.header2}>Login to your account.</Text>
 
         <View style={styles.inputContainer}>
-          <Icon name="user" style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -88,7 +87,6 @@ const LoginScreen = ({navigation}) => {
         </View>
 
         <View style={styles.inputContainer}>
-          <Icon name="lock" style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -97,9 +95,9 @@ const LoginScreen = ({navigation}) => {
             secureTextEntry
           />
         </View>
-        <TouchableOpacity style={{marginLeft: 190, marginTop: 10}}>
+        {/* <TouchableOpacity style={{marginLeft: 190, marginTop: 10}}>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {isLoading ? (
           <ActivityIndicator size="large" color="#FF6347" />
@@ -108,10 +106,15 @@ const LoginScreen = ({navigation}) => {
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
         )}
+        <TouchableOpacity
+          onPress={navigateToRegister}
+          style={styles.registerContainer}>
+          <Text style={styles.register}>
+            Don't have an account?{' '}
+            <Text style={styles.registerHighlight}>Signup</Text>
+          </Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={navigateToRegister}>
-        <Text style={styles.register}>Don't have an account? Sign Up</Text>
-      </TouchableOpacity>
     </>
   );
 };
@@ -121,32 +124,33 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 16,
+    backgroundColor: 'white',
   },
   header: {
-    fontSize: 34,
-    color: '#FF6347',
-    marginBottom: 30,
-    fontWeight: 'bold',
-    fontFamily: 'Avenir Next',
+    fontSize: 25,
+    color: '#F49E1A',
+    fontFamily: 'Outfit-Medium',
+    marginBottom: 5,
+  },
+  header2: {
+    fontSize: 20,
+    color: '#6C6C6C',
+    fontFamily: 'Outfit-Regular',
+    marginBottom: 20,
   },
 
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '80%',
+    width: '90%',
     marginVertical: 10,
     backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
     paddingHorizontal: 15,
-    paddingVertical: 5,
+    paddingVertical: 3,
     borderRadius: 5,
-    height: 45,
+    height: 50,
+    borderColor: '#BFBFBF',
+    borderWidth: 1,
   },
   icon: {
     marginRight: 10,
@@ -165,17 +169,23 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginBottom: 10,
   },
+  registerContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
   register: {
-    position: 'absolute',
-    color: '#FF6347',
-    bottom: 10,
-    width: '100%',
-    textAlign: 'center',
+    color: '#6C6C6C',
+    fontSize: 20,
+    fontFamily: 'Outfit-Regular',
+  },
+  registerHighlight: {
+    fontFamily: 'Outfit-Regular',
+    color: '#E38A00',
   },
   button: {
-    backgroundColor: '#FF6347',
+    backgroundColor: '#F49E1A',
     borderRadius: 10,
-    width: '80%',
+    width: '90%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',

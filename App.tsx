@@ -13,27 +13,35 @@ import { HomeScreen } from './src/screens/Home';
 import CartScreen from './src/screens/Cart';
 import RegisterScreen from './src/screens/Register';
 import OrdersScreen from './src/components/UserOrders';
+import { SplashScreen } from './src/screens/Splash';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
-  const [initialRouteName, setInitialRouteName] = useState('Home');
-
   const { isAuthenticated } = useAuth();
+  const [initialRoute, setInitialRoute] = useState('splash');
+
   useEffect(() => {
     if (isAuthenticated) {
-      setInitialRouteName('Home');
+      setInitialRoute('Home');
     } else {
-      setInitialRouteName('Login');
+      setInitialRoute('Login');
     }
-  }, [isAuthenticated]); 
+  }, [isAuthenticated]);
+
 
   return (
     <NavigationContainer >
-        <Stack.Navigator initialRouteName={initialRouteName}>
+        <Stack.Navigator initialRouteName={initialRoute}>
+          <Stack.Screen
+          name="home"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="splash" component={SplashScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
           <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: true }} />
           <Stack.Screen name="Details" component={DetailsScreen} options={{ headerShown: false }} />
           <Stack.Screen name="invoice" component={InvoiceScreen} options={{ headerShown: false }} />

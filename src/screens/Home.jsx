@@ -15,6 +15,7 @@ import {Products} from '../components/Products';
 import {HeaderComp} from '../components/Header';
 import MainHeader from '../components/MainHeader';
 import Sidebar from '../components/SideBar';
+import LinearGradient from 'react-native-linear-gradient';
 
 export const HomeScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
@@ -79,23 +80,15 @@ export const HomeScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <MainHeader onMenuPress={toggleSidebar} onCartPress={navigateToCart} />
+      <MainHeader
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        onMenuPress={toggleSidebar}
+        onCartPress={navigateToCart}
+      />
       <Sidebar visible={sidebarVisible} onClose={toggleSidebar} />
-      <HeaderComp searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
       <ScrollView>
-        <View
-          style={{
-            marginTop: 20,
-            marginLeft: 15,
-            marginBottom: 15,
-            fontFamily: 'Outfit-ExtraBold',
-          }}>
-          <Text
-            style={{fontSize: 30, color: 'black', fontFamily: 'Outfit-Medium'}}>
-            Categories
-          </Text>
-        </View>
         {loading ? (
           <View style={styles.loaderContainer}>
             <ActivityIndicator size="large" color="#F17547" />
@@ -114,13 +107,13 @@ export const HomeScreen = ({navigation}) => {
         )}
         <Text
           style={{
-            fontSize: 30,
-            color: 'black',
+            fontSize: 14,
+            color: '#223263',
             fontFamily: 'Outfit-Medium',
             marginLeft: 14,
             marginTop: 10,
           }}>
-          Featured Food
+          Quick Orders
         </Text>
 
         <Products selectedCategoryId={selectedCategoryId} />
@@ -132,7 +125,7 @@ export const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'white',
   },
   searchContainer: {
     backgroundColor: 'white',
@@ -158,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
-    borderRadius: 20,
+    borderRadius: 10,
     margin: 10,
     padding: 10,
     shadowColor: '#000',
@@ -166,8 +159,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 4.5,
     elevation: 6,
-    width: 85,
-    height: 100,
+    width: 100,
+    height: 82,
   },
   categoryImage: {
     width: 40,
@@ -178,7 +171,7 @@ const styles = StyleSheet.create({
   categoryText: {
     color: 'black',
     fontSize: 12,
-    fontFamily: 'Outfit-SemiBold',
+    fontFamily: 'Outfit-Medium',
   },
   categoryTextSelected: {
     color: 'white',
@@ -225,7 +218,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   categoryCardSelected: {
-    backgroundColor: '#F17547',
+    backgroundColor: '#E4A112',
   },
   loaderContainer: {
     flex: 1,

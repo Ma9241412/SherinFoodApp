@@ -68,26 +68,26 @@ export const Products = ({selectedCategoryId}) => {
             source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
             style={styles.foodItemImage}
           />
-          <View style={styles.deliveryTime}>
-            <Text style={styles.timeText}>25-30 min</Text>
-          </View>
+
           <TouchableOpacity style={styles.favIcon}>
-            <Icon name="heart-o" size={20} color="#FFF" />
+            <Icon name="star" size={16} color="#000000" />
+            <Text style={styles.ratingText}>4.7</Text>
           </TouchableOpacity>
           <View style={styles.cardContent}>
             <Text style={styles.foodItemName}>{item.name}</Text>
+            <Text style={styles.categoryText}>Rs .{item.price}</Text>
             <View style={styles.footer}>
-              <Icon name="star" size={16} color="#FFC107" />
-              <Text style={styles.ratingText}>4.7</Text>
               <View
                 style={{
-                  backgroundColor: '#F17547',
-                  paddingHorizontal: 10,
                   paddingVertical: 5,
-                  marginLeft: 10,
                   borderRadius: 5,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 8,
                 }}>
-                <Text style={styles.categoryText}>Rs.{item.price}</Text>
+                <Icon name="clock-o" size={16} color="#000000" />
+
+                <Text style={styles.timeText}>25-30 min</Text>
               </View>
             </View>
           </View>
@@ -115,19 +115,17 @@ export const Products = ({selectedCategoryId}) => {
 
 const styles = StyleSheet.create({
   foodItemCard: {
-    borderRadius: 20,
     margin: 10,
     overflow: 'hidden',
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    elevation: 3,
+    flexDirection: 'row',
+    backgroundColor: '#F6F6F6',
+    borderBottomLeftRadius: 50,
+    padding: 10,
   },
   foodItemImage: {
-    width: '100%',
-    height: 150,
+    width: '25%',
+    height: 90,
+    borderRadius: 50,
   },
   deliveryTime: {
     position: 'absolute',
@@ -139,41 +137,42 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   timeText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
-    fontFamily: 'Outfit-Medium',
+    color: '#000000',
+    fontSize: 10,
+    fontFamily: 'Outfit-Regular',
+    marginLeft: 4,
   },
   favIcon: {
     position: 'absolute',
     right: 10,
     top: 10,
-    backgroundColor: 'rgba(0,0,0,0.6)',
     borderRadius: 20,
-    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 15,
   },
   cardContent: {
     padding: 10,
+    marginTop: 5,
   },
   foodItemName: {
-    fontSize: 20,
-    fontFamily: 'Outfit-Medium',
-    marginBottom: 5,
-    color: 'black',
+    fontSize: 15,
+    fontFamily: 'Outfit-Bold',
+    color: '#2B2B2B',
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   ratingText: {
-    fontSize: 18,
-    color: '#FFC107',
+    fontSize: 13,
+    color: '#000000',
     fontFamily: 'Outfit-Medium',
     marginLeft: 5,
   },
   categoryText: {
-    fontSize: 16,
-    color: 'white',
+    fontSize: 12,
+    color: '#223263',
     fontFamily: 'Outfit-Medium',
   },
   priceRange: {

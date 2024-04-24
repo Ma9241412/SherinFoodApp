@@ -9,7 +9,10 @@ import {
   Text,
   TouchableOpacity,
   ToastAndroid,
+  Image,
 } from 'react-native';
+import {launchImageLibrary} from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // Make sure you have installed react-native-vector-icons
 
 const RegisterScreen = ({navigation}) => {
   const [name, setName] = useState('');
@@ -17,8 +20,29 @@ const RegisterScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [image, setImage] = useState(null);
+
+  const selectImage = () => {
+    const options = {
+      noData: true,
+      mediaType: 'photo',
+    };
+
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = {uri: response.assets[0].uri};
+        setImage(source);
+      }
+    });
+  };
+
   const handleRegister = async () => {
-    // Simple validation checks
     if (!name.trim()) {
       alert('Please enter your name.');
       return;
@@ -40,20 +64,16 @@ const RegisterScreen = ({navigation}) => {
       return;
     }
 
-    // More advanced email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       alert('Please enter a valid email address.');
       return;
     }
 
-    // Password length check
     if (password.length < 8) {
       alert('Password must be at least 8 characters long.');
       return;
     }
-
-    // Phone number validation (very basic, adjust regex to fit your requirements)
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phone.trim())) {
       alert('Please enter a valid phone number with 10 digits.');
@@ -61,20 +81,29 @@ const RegisterScreen = ({navigation}) => {
     }
 
     try {
+      const formData = new FormData();
+      formData.append('name', name.trim());
+      formData.append('email', email.trim());
+      formData.append('password', password);
+      formData.append('phone', phone.trim());
+      formData.append('address', address.trim());
+
+      if (image) {
+        formData.append('image', {
+          uri: image.uri,
+          type: 'image/jpeg',
+          name: 'profilepic.jpg',
+        });
+      }
+
       const response = await fetch(
         'http://192.168.18.13:8000/api/v1/auth/register',
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            Accept: 'application/json',
           },
-          body: JSON.stringify({
-            name: name.trim(),
-            email: email.trim(),
-            password,
-            phone: phone.trim(),
-            address: address.trim(),
-          }),
+          body: formData,
         },
       );
 
@@ -103,8 +132,18 @@ const RegisterScreen = ({navigation}) => {
   return (
     <>
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        <Text style={styles.header}>Register Yourself</Text>
+        <Text style={styles.header}>Create an account!</Text>
 
+        <TouchableOpacity onPress={selectImage} style={styles.imageUploader}>
+          {image?.uri ? (
+            <Image source={{uri: image.uri}} style={styles.imagePreview} />
+          ) : (
+            <>
+              <Icon name="camera-alt" size={30} color="#F49E1A" />
+              <Text style={styles.imageUploadText}>Select Image</Text>
+            </>
+          )}
+        </TouchableOpacity>
         <TextInput
           style={styles.input}
           placeholder="Name"
@@ -142,12 +181,18 @@ const RegisterScreen = ({navigation}) => {
           autoCapitalize="words"
           multiline
         />
+
         <TouchableOpacity onPress={handleRegister} style={styles.button}>
           <Text style={styles.buttonText}>Sign up</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
-      <TouchableOpacity onPress={navigateToLogin}>
-        <Text style={styles.register}>Already Have An Account? Login Now</Text>
+      <TouchableOpacity
+        onPress={navigateToLogin}
+        style={styles.registerContainer}>
+        <Text style={styles.register}>
+          Already have an account?{' '}
+          <Text style={styles.registerHighlight}>Login</Text>
+        </Text>
       </TouchableOpacity>
     </>
   );
@@ -158,41 +203,36 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 16,
+    backgroundColor: 'white',
   },
   header: {
-    fontSize: 34,
-    color: '#FF6347',
-    marginBottom: 10,
-    fontWeight: 'bold',
-    fontFamily: 'Avenir Next',
+    fontSize: 25,
+    color: '#F49E1A',
+    fontFamily: 'Outfit-Medium',
+    marginBottom: 5,
   },
 
   input: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '80%',
+    width: '90%',
     marginVertical: 10,
     backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
     paddingHorizontal: 15,
-    paddingVertical: 5,
+    paddingVertical: 3,
     borderRadius: 5,
-    height: 45,
+    height: 50,
+    borderColor: '#BFBFBF',
+    borderWidth: 1,
   },
   button: {
-    backgroundColor: '#FF6347',
-    borderRadius: 10,
-    width: '80%',
+    backgroundColor: '#F49E1A',
+    borderRadius: 8,
+    width: '90%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 10,
   },
   buttonText: {
     color: 'white',
@@ -200,12 +240,40 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  registerContainer: {
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
   register: {
+    color: '#6C6C6C',
+    fontSize: 20,
+    fontFamily: 'Outfit-Regular',
     position: 'absolute',
-    color: '#FF6347',
     bottom: 10,
-    width: '100%',
-    textAlign: 'center',
+  },
+  registerHighlight: {
+    fontFamily: 'Outfit-Regular',
+    color: '#E38A00',
+  },
+  imageUploader: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 5,
+    backgroundColor: '#f0f0f0',
+    overflow: 'hidden',
+  },
+  imagePreview: {
+    width: '50%',
+    height: '50%',
+    borderRadius: 60,
+  },
+  imageUploadText: {
+    color: '#6C6C6C',
+    marginTop: 8,
+    fontFamily: 'Outfit-Regular',
   },
 });
 

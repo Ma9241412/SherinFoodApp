@@ -70,47 +70,54 @@ const ProductDetailsScreen = ({route, navigation}) => {
         <Text style={styles.headerTitle}>{item.name}</Text>
         <Icon name="ellipsis-v" size={24} color="#000" />
       </View>
-      <Image
-        source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
-        style={styles.image}
-      />
-      <View style={styles.quantityContainer1}>
-        <Text style={styles.title}>Price: Rs.{totalPrice}</Text>
-        <View style={styles.quantityContainer}>
-          <Text style={styles.title}>Qty: </Text>
 
+      <View style={styles.quantityContainer1}>
+        <Image
+          source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
+          style={styles.image}
+        />
+        <View style={{flexDirection: 'column', marginLeft: 10}}>
+          <Text style={styles.title1}>{item.name}</Text>
+
+          <Text style={styles.title}>Price: Rs.{item.price}</Text>
+          <View style={styles.footer}>
+            <View
+              style={{
+                paddingVertical: 5,
+                borderRadius: 5,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Icon name="clock-o" size={16} color="#000000" />
+
+              <Text style={styles.timeText}>25-30 min</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <View style={{paddingHorizontal: 10}}>
+        <View style={styles.quantityContainer}>
           <TouchableOpacity
-            style={{
-              backgroundColor: 'rgba(255, 99, 71, 0.87)',
-              paddingHorizontal: 8,
-              paddingVertical: 4,
-              borderRadius: 3,
-              marginLeft: 4,
-            }}
             onPress={() => updateQuantity('decrease')}
             disabled={quantity <= 1}>
-            <Icon name="minus" size={20} color="#fff" />
+            <Icon name="minus" size={20} color="#AEAEB2" />
           </TouchableOpacity>
           <Text style={styles.quantity}>{quantity}</Text>
-          <TouchableOpacity
-            style={{
-              backgroundColor: 'rgba(255, 99, 71, 0.87)',
-              paddingHorizontal: 8,
-              paddingVertical: 4,
-              borderRadius: 3,
-            }}
-            onPress={() => updateQuantity('increase')}>
-            <Icon name="plus" size={20} color="#fff" />
+          <TouchableOpacity onPress={() => updateQuantity('increase')}>
+            <Icon name="plus" size={20} color="#AEAEB2" />
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.details}>
-        <Text style={styles.title}>{item.name}</Text>
-
+      {/* <View style={styles.details}>
         <Text style={styles.description}>{item.description}</Text>
-      </View>
-
+      </View> */}
       <View style={styles.orderButtonContainer}>
+        <View>
+          <Text style={styles.description2}>Rs .{totalPrice}</Text>
+          <Text style={styles.description3}>Total Price</Text>
+        </View>
+
         <TouchableOpacity
           onPress={() => handleOrderPress(item)}
           style={styles.orderButton}>
@@ -132,24 +139,51 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
   },
+  orderButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    right: 10,
+  },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 15,
     fontFamily: 'Outfit-SemiBold',
     color: 'black',
   },
+  title1: {
+    fontSize: 15,
+    fontFamily: 'Outfit-Medium',
+    color: '#000000',
+  },
+  timeText: {
+    color: '#000000',
+    fontSize: 10,
+    fontFamily: 'Outfit-Regular',
+    marginLeft: 4,
+  },
   image: {
-    width: '100%',
-    aspectRatio: 0.73,
-    resizeMode: 'cover',
+    width: '20%',
+    height: 80,
+    borderRadius: 40,
   },
   quantityContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
     alignItems: 'center',
+    marginTop: 30,
+    borderColor: '#F2F2F7',
+    borderWidth: 2,
+    borderRadius: 10,
+    paddingVertical: 8,
   },
   quantityContainer1: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 10,
     paddingHorizontal: 10,
@@ -165,7 +199,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 10,
     color: 'black',
     fontFamily: 'Outfit-SemiBold',
   },
@@ -173,6 +207,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     marginVertical: 4,
+    fontFamily: 'Outfit-Medium',
+  },
+  description2: {
+    fontSize: 20,
+    color: 'black',
+    fontFamily: 'Outfit-Bold',
+  },
+  description3: {
+    fontSize: 10,
+    color: 'black',
     fontFamily: 'Outfit-Medium',
   },
   calories: {
@@ -193,20 +237,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
   },
-  orderButtonContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
-    backgroundColor: '#FF6347',
-  },
+
   orderButton: {
-    backgroundColor: '#FF6347',
-    padding: 16,
-    borderRadius: 20,
+    backgroundColor: '#E4A112',
+    padding: 10,
+    borderRadius: 5,
     alignItems: 'center',
+    width: 150,
   },
   orderButtonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 14,
     fontFamily: 'Outfit-Regular',
   },
 });
