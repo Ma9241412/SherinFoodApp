@@ -71,26 +71,28 @@ const ProductDetailsScreen = ({route, navigation}) => {
         <Icon name="ellipsis-v" size={24} color="#000" />
       </View>
 
-      <View style={styles.quantityContainer1}>
-        <Image
-          source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
-          style={styles.image}
-        />
-        <View style={{flexDirection: 'column', marginLeft: 10}}>
-          <Text style={styles.title1}>{item.name}</Text>
+      <View style={{paddingHorizontal: 10}}>
+        <View style={styles.quantityContainer1}>
+          <Image
+            source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
+            style={styles.image}
+          />
+          <View style={{flexDirection: 'column', marginLeft: 10}}>
+            <Text style={styles.title1}>{item.name}</Text>
 
-          <Text style={styles.title}>Price: Rs.{item.price}</Text>
-          <View style={styles.footer}>
-            <View
-              style={{
-                paddingVertical: 5,
-                borderRadius: 5,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Icon name="clock-o" size={16} color="#000000" />
+            <Text style={styles.title}>Price: Rs.{totalPrice}</Text>
+            <View style={styles.footer}>
+              <View
+                style={{
+                  paddingVertical: 5,
+                  borderRadius: 5,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Icon name="clock-o" size={16} color="#000000" />
 
-              <Text style={styles.timeText}>25-30 min</Text>
+                <Text style={styles.timeText}>25-30 min</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -186,7 +188,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 10,
-    paddingHorizontal: 10,
+    borderColor: '#CECECE69',
+    borderWidth: 1,
+    backgroundColor: '#F6F6F6',
+    borderTopLeftRadius: 50,
+    borderBottomLeftRadius: 50,
   },
   quantity: {
     marginHorizontal: 16,

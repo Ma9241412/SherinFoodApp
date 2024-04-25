@@ -3,6 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CartScreen from '../screens/Cart';
 import {HomeScreen} from '../screens/Home';
+import OrdersScreen from '../components/UserOrders';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,21 +22,25 @@ const TabNavigator = () => (
           iconName = focused ? 'file-text' : 'file-text-o';
         } else if (route.name === 'cart') {
           iconName = focused ? 'shopping-cart' : 'shopping-cart';
-        } else if (route.name === 'userdetails') {
-          iconName = focused ? 'user' : 'user-o';
+        } else if (route.name === 'orders') {
+          iconName = focused ? 'user' : 'list-alt';
         }
 
-        // You can return any component that you like here!
         return <Icon name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: 'tomato',
-      tabBarInactiveTintColor: 'gray',
+      tabBarActiveTintColor: '#E4A112',
+      tabBarInactiveTintColor: '#9098B1',
       headerShown: false,
     })}>
     <Tab.Screen name="home" component={HomeScreen} />
     <Tab.Screen
       name="cart"
       component={CartScreen}
+      options={{headerShown: false}}
+    />
+    <Tab.Screen
+      name="orders"
+      component={OrdersScreen}
       options={{headerShown: false}}
     />
   </Tab.Navigator>

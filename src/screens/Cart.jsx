@@ -130,30 +130,47 @@ const CartScreen = ({navigation}) => {
     <View style={styles.card}>
       <View style={styles.itemContainer}>
         <Image
-          source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}} // Replace with `item.photo` or a placeholder if `item.photo` is null
+          source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
           style={styles.itemImage}
         />
         <View style={styles.itemInfo}>
           <Text style={styles.itemName}>{item.name}</Text>
-          <Text style={styles.itemPrice}>Rs.{item.price.toFixed(2)}</Text>
+          <Text style={styles.itemPrice}>Rs.{total.toFixed(2)}</Text>
           <View style={styles.quantityContainer}>
             <TouchableOpacity
               style={styles.button}
               onPress={() => decrementQuantity(item._id)}
               disabled={item.quantity === 1}>
-              <Icon name="minus" size={20} color="#fff" />
+              <Icon name="minus" size={20} color="#AEAEB2" />
             </TouchableOpacity>
-            <Text style={styles.itemQuantity}>Qty: {item.quantity}</Text>
+            <Text style={styles.itemQuantity}> {item.quantity}</Text>
             <TouchableOpacity
               style={styles.button}
               onPress={() => incrementQuantity(item._id)}>
-              <Icon name="plus" size={20} color="#fff" />
+              <Icon name="plus" size={20} color="#AEAEB2" />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => removeItem(item._id)}>
-            <Icon name="trash" size={20} color="black" />
-          </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          style={styles.trash}
+          onPress={() => removeItem(item._id)}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                marginRight: 5,
+                color: 'white',
+                fontSize: 12,
+                fontFamily: 'Outfit-Regular',
+              }}>
+              Remove
+            </Text>
+            <Icon name="trash" size={15} color="white" />
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -167,7 +184,6 @@ const CartScreen = ({navigation}) => {
         contentContainerStyle={styles.listContainer}
         ListFooterComponent={
           <View style={styles.footer}>
-            <Text style={styles.total}>Total: Rs {total.toFixed(2)}</Text>
             <TouchableOpacity
               style={[
                 styles.checkoutButton,
@@ -206,16 +222,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit-SemiBold',
   },
   card: {
-    backgroundColor: '#E5E4E4',
+    backgroundColor: '#F6F6F6',
     borderRadius: 8,
-    padding: 10,
-    marginVertical: 8,
+    marginVertical: 10,
     marginHorizontal: 16,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    borderTopLeftRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderColor: '#CECECE69',
+    borderWidth: 1,
   },
   itemContainer: {
     flexDirection: 'row',
@@ -224,7 +238,7 @@ const styles = StyleSheet.create({
   itemImage: {
     width: 100,
     height: 100,
-    borderRadius: 10,
+    borderRadius: 50,
     marginRight: 10,
   },
   itemInfo: {
@@ -233,13 +247,13 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontFamily: 'Outfit-SemiBold',
-    fontSize: 18,
+    fontSize: 15,
     color: 'black',
   },
   itemPrice: {
-    fontSize: 16,
+    fontSize: 12,
     color: 'black',
-    fontFamily: 'Outfit-SemiBold',
+    fontFamily: 'Outfit-Regular',
   },
   itemQuantity: {
     fontSize: 16,
@@ -253,12 +267,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    backgroundColor: 'rgba(255, 99, 71, 0.87)',
-    paddingHorizontal: 6,
-    paddingVertical: 6,
     borderRadius: 3,
   },
-
   total: {
     fontSize: 22,
     color: '#E44C4C',
@@ -267,8 +277,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   checkoutButton: {
-    backgroundColor: '#FF6347',
-    borderRadius: 25,
+    backgroundColor: '#E4A112',
+    borderRadius: 8,
     padding: 15,
     justifyContent: 'center',
     alignItems: 'center',
@@ -278,8 +288,8 @@ const styles = StyleSheet.create({
   checkoutButtonText: {
     color: '#FFFFFF',
     fontWeight: '600',
-    fontSize: 18,
-    fontFamily: 'Outfit-Regular',
+    fontSize: 15,
+    fontFamily: 'Outfit-Bold',
   },
   emptyMessage: {
     textAlign: 'center',
@@ -289,6 +299,16 @@ const styles = StyleSheet.create({
   },
   footer: {
     marginTop: 16,
+  },
+  trash: {
+    backgroundColor: '#C73F3F',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    paddingHorizontal: 40,
+    paddingVertical: 5,
+    borderBottomRightRadius: 10,
+    borderTopLeftRadius: 10,
   },
 });
 

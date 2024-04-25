@@ -120,11 +120,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#F6F6F6',
     borderBottomLeftRadius: 50,
-    padding: 10,
+    borderTopLeftRadius: 50,
+    borderColor: '#CECECE69',
+    borderWidth: 1,
   },
   foodItemImage: {
     width: '25%',
-    height: 90,
+    height: 100,
     borderRadius: 50,
   },
   deliveryTime: {

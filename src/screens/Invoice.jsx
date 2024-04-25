@@ -6,6 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   ToastAndroid,
+  ImageBackground,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -74,29 +76,62 @@ const InvoiceScreen = ({route, navigation}) => {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Sherin Huts</Text>
         <Text style={styles.headerSubtitle}>@sherinHuts</Text>
       </View>
-      {cartItems.map((item, index) => (
-        <View key={index} style={styles.itemContainer}>
-          <View style={styles.itemDetails}>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
+
+      <View style={styles.fullWidthContainer}>
+        <ImageBackground
+          source={require('../assets/BG.png')}
+          style={styles.backgroundImage}>
+          {cartItems.map((item, index) => (
+            <View key={index} style={styles.itemContainer}>
+              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemQuantity}>Items: {item.quantity}</Text>
+            </View>
+          ))}
+
+          <View style={styles.summary}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={styles.summaryText}>Sub Total</Text>
+              <Text style={styles.summaryPrice}>Rs.{total.toFixed(2)}</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={styles.summaryText}>GST</Text>
+              <Text style={styles.summaryPrice}>
+                Rs.{(total * 0.07).toFixed(2)}
+              </Text>
+            </View>
+            <View style={styles.dottedLine} />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: 10,
+              }}>
+              <Text style={styles.totalLabel}>To Pay</Text>
+              <Text style={styles.totalPrice}>
+                Rs.{(total * 1.07).toFixed(2)}
+              </Text>
+            </View>
           </View>
-          <Text style={styles.itemPrice}>
-            Rs.{(item.price * item.quantity).toFixed(2)}
-          </Text>
-        </View>
-      ))}
-      <View style={styles.summary}>
-        <Text style={styles.summaryText}>Item Total</Text>
-        <Text style={styles.summaryPrice}>Rs.{total.toFixed(2)}</Text>
-        <Text style={styles.summaryText}>GST</Text>
-        <Text style={styles.summaryPrice}>Rs.{(total * 0.07).toFixed(2)}</Text>
-        <Text style={styles.totalLabel}>To Pay</Text>
-        <Text style={styles.totalPrice}>Rs.{(total * 1.07).toFixed(2)}</Text>
+        </ImageBackground>
       </View>
+
+      {/* Order Now Button */}
       <TouchableOpacity style={styles.button} onPress={handleOrderNow}>
         <Text style={styles.buttonText}>Order Now</Text>
       </TouchableOpacity>
@@ -105,9 +140,32 @@ const InvoiceScreen = ({route, navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    width: '100%',
+    justifyContent: 'center',
+  },
+  fullWidthContainer: {
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+  },
+  dottedLine: {
+    height: 1,
+    width: '100%',
+    borderWidth: 1,
+    borderRadius: 1,
+    borderStyle: 'dotted',
+    borderColor: 'white',
+    marginTop: 20,
+  },
+  stretchImage: {
+    resizeMode: 'cover',
+    width: '100%',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
   },
   header: {
     backgroundColor: '#f7f7f7',
@@ -118,7 +176,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 25,
-    color: '#333',
+    color: '#000000',
     fontFamily: 'Outfit-Bold',
   },
   headerSubtitle: {
@@ -130,9 +188,8 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e2e2e2',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   itemDetails: {
     flex: 1,
@@ -154,36 +211,37 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit-Medium',
   },
   summary: {
-    padding: 16,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   summaryText: {
-    fontSize: 18,
-    color: 'black',
+    fontSize: 15,
+    color: '#505050',
     fontFamily: 'Outfit-Medium',
   },
   summaryPrice: {
     fontSize: 16,
-    color: 'black',
-    fontFamily: 'Outfit-Medium',
-    marginBottom: 8,
+    color: '#2B2B2B',
+    fontFamily: 'Outfit-Bold',
   },
   totalLabel: {
-    fontSize: 18,
-    color: 'black',
+    fontSize: 15,
+    color: '#505050',
     fontFamily: 'Outfit-Medium',
-    marginTop: 10,
   },
   totalPrice: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#e44c4c',
+    fontSize: 20,
+    color: '#2B2B2B',
+    fontFamily: 'Outfit-Bold',
   },
   button: {
-    backgroundColor: '#FF6347',
+    backgroundColor: '#E4A112',
     padding: 16,
-    borderRadius: 25,
     margin: 16,
+    borderRadius: 8,
     alignItems: 'center',
+    marginHorizontal: 10,
   },
   buttonText: {
     color: '#fff',

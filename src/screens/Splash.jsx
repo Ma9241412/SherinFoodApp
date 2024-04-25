@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // Or any other icon set
 
 export const SplashScreen = () => {
   const navigation = useNavigation();

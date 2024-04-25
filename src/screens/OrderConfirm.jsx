@@ -16,17 +16,19 @@ const OrderConfirmationScreen = ({navigation}) => {
 
       <View style={styles.iconContainer}>
         <Image
-          source={require('../assets/order.png')}
+          source={require('../assets/success2.png')}
           style={styles.successIcon}
         />
       </View>
 
-      <Text style={styles.successTitle}>Order Successful</Text>
-      <Text style={styles.thankYouText}>Thank you!</Text>
-      <Text style={styles.subText}>Rider is on his way to your table</Text>
+      <Text style={styles.successTitle}>Order Placed!</Text>
+      <Text style={styles.subText}>
+        Thank you for your order! You will recieve a confirmation call in a few
+        minutes.{' '}
+      </Text>
 
       <TouchableOpacity onPress={handlePressBack} style={styles.button}>
-        <Text style={styles.buttonText}>Wanna Order More</Text>
+        <Text style={styles.buttonText}>Order More</Text>
       </TouchableOpacity>
     </View>
   );
@@ -37,7 +39,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: 15,
     backgroundColor: '#FFF',
   },
   navBar: {
@@ -53,14 +55,15 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   successIcon: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     resizeMode: 'contain',
   },
   successTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
     marginBottom: 8,
+    color: '#F49E1A',
+    fontFamily: 'Outfit-SemiBold',
   },
   thankYouText: {
     fontSize: 20,
@@ -68,21 +71,23 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   subText: {
-    fontSize: 16,
-    color: '#555',
+    fontSize: 20,
+    color: '#6C6C6C',
     marginBottom: 32,
+    textAlign: 'center',
+    fontFamily: 'Outfit-Medium',
   },
   button: {
-    backgroundColor: '#F17547',
+    backgroundColor: '#E4A112',
     padding: 16,
-    borderRadius: 30,
-    width: '80%',
+    borderRadius: 8,
+    width: '100%',
     alignItems: 'center',
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 16,
     color: 'white',
-    fontFamily: 'Outfit-Bold',
+    fontFamily: 'Outfit-SemiBold',
   },
 });
 

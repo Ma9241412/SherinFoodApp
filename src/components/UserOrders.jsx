@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -52,42 +52,38 @@ const OrdersScreen = () => {
   }, []);
 
   const renderOrderItem = ({item}) => (
-    <View style={styles.orderCard}>
-      <Image
-        source={{
-          uri: `http://192.168.18.13:8000/uploads/${item.cartItems.map(
-            cartItem => cartItem.product.photo,
-          )}`,
-        }}
-        style={styles.productImage}
-      />
-      <View style={styles.orderDetails}>
-        <Text style={styles.productName}>
-          {item.cartItems.map(cartItem => cartItem.product.name).join(', ')}
-        </Text>
-        <Text style={[styles.productCount, styles.tag]}>
-          {item.cartItems.map(cartItem => cartItem.product.quantity)} Items
-        </Text>
-        <View style={styles.detailsRow}>
-          <Text style={styles.detailLabel}>OrderId</Text>
-          <Text style={styles.detailValue}>{item._id}</Text>
-        </View>
-        <View style={styles.detailsRow}>
-          <Text style={styles.detailLabel}>Total</Text>
-          <Text style={styles.detailValue}>{item.total}.Rs</Text>
-        </View>
-        <View style={styles.detailsRow}>
-          <Text style={styles.detailLabel}>Status</Text>
-          <Text style={[styles.status, styles.tag]}>{item.status}</Text>
+    <>
+      <View style={styles.orderCard}>
+        <Image
+          source={{
+            uri: `http://192.168.18.13:8000/uploads/${item.cartItems.map(
+              cartItem => cartItem.product.photo,
+            )}`,
+          }}
+          style={styles.productImage}
+        />
+        <View style={styles.orderDetails}>
+          <Text style={styles.productName}>
+            {item.cartItems.map(cartItem => cartItem.product.name).join(', ')}
+          </Text>
+          <Text style={[styles.productCount, styles.tag]}>
+            {item.cartItems.map(cartItem => cartItem.product.quantity)} Items
+          </Text>
+          <View style={styles.detailsRow}>
+            <Text style={styles.detailValue}>{item.total}.Rs</Text>
+            <View style={styles.statusBG}>
+              <Text style={styles.status}>{item.status}</Text>
+            </View>
+          </View>
         </View>
       </View>
-    </View>
+    </>
   );
 
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#E4A112" />
       ) : error ? (
         <Text style={styles.errorText}>{error}</Text>
       ) : (
@@ -104,24 +100,23 @@ const OrdersScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'white',
   },
   orderCard: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 16,
+    backgroundColor: '#F6F6F6',
     margin: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderTopLeftRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderColor: '#CECECE69',
+    borderWidth: 2,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 20,
   },
   productImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     backgroundColor: '#f0f0f0',
     marginRight: 16,
   },
@@ -131,20 +126,17 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontFamily: 'Outfit-Bold',
-    fontSize: 18,
+    fontSize: 15,
     marginBottom: 4,
-    color: 'black',
+    color: '#2B2B2B',
   },
   productCount: {
     fontSize: 15,
-    color: 'white',
+    color: '#787F93',
     marginBottom: 8,
     fontFamily: 'Outfit-Medium',
   },
   tag: {
-    backgroundColor: 'orange',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
     borderRadius: 5,
     alignSelf: 'flex-start',
   },
@@ -152,7 +144,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
   },
   detailLabel: {
     fontSize: 15,
@@ -169,6 +160,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit-Medium',
     color: 'white',
   },
+  statusBG: {
+    backgroundColor: 'orange',
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    bottom: 0,
+    right: 0,
+    top: 10,
+    borderBottomRightRadius: 15,
+    borderTopLeftRadius: 15,
+  },
+
   errorText: {
     marginTop: 330,
     justifyContent: 'center',
