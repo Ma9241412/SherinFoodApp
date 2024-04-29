@@ -14,6 +14,7 @@ import axios from 'axios';
 
 const InvoiceScreen = ({route, navigation}) => {
   const {cartItems, total} = route.params;
+  console.log('invoice', cartItems);
 
   const handleOrderNow = async () => {
     try {
@@ -76,20 +77,27 @@ const InvoiceScreen = ({route, navigation}) => {
 
   return (
     <>
-      <ScrollView style={styles.container}>
-        {/* Header */}
+      <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Sherin Huts</Text>
           <Text style={styles.headerSubtitle}>@sherinHuts</Text>
         </View>
-        <View>
+        <ScrollView style={{height: 400}}>
           {cartItems.map((item, index) => (
             <View key={index} style={styles.itemContainer}>
+              <Image
+                source={{
+                  uri: `http://192.168.18.13:8000/uploads/${item.photo}`,
+                }}
+                style={{width: 50, height: 50}}
+              />
+              <Text style={styles.itemName}>{item.name}</Text>
               <Text style={styles.itemName}>{item.name}</Text>
               <Text style={styles.itemQuantity}>Items: {item.quantity}</Text>
             </View>
           ))}
-        </View>
+        </ScrollView>
+
         <View style={styles.fullWidthContainer}>
           <ImageBackground
             source={require('../assets/BG.png')}
@@ -143,7 +151,7 @@ const InvoiceScreen = ({route, navigation}) => {
             </View>
           </ImageBackground>
         </View>
-      </ScrollView>
+      </View>
       <TouchableOpacity style={styles.button} onPress={handleOrderNow}>
         <Text style={styles.buttonText}>Order Now</Text>
       </TouchableOpacity>
@@ -154,13 +162,12 @@ const InvoiceScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   backgroundImage: {
     width: '100%',
-    justifyContent: 'center',
   },
   fullWidthContainer: {
     width: '100%',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingVertical: 80,
+    paddingHorizontal: 12,
   },
   dottedLine: {
     height: 1,
@@ -177,10 +184,10 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F2F2F7',
   },
   header: {
-    backgroundColor: '#f7f7f7',
+    backgroundColor: 'white',
     paddingVertical: 16,
     alignItems: 'center',
     borderBottomWidth: 1,
@@ -198,10 +205,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit-Bold',
   },
   itemContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    paddingVertical: 20,
     paddingHorizontal: 20,
+    backgroundColor: 'white',
   },
   itemDetails: {
     flex: 1,
