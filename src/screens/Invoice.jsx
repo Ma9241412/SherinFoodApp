@@ -77,84 +77,109 @@ const InvoiceScreen = ({route, navigation}) => {
 
   return (
     <>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Sherin Huts</Text>
-          <Text style={styles.headerSubtitle}>@sherinHuts</Text>
-        </View>
-        <ScrollView style={{height: 400}}>
-          {cartItems.map((item, index) => (
-            <View key={index} style={styles.itemContainer}>
-              <Image
-                source={{
-                  uri: `http://192.168.18.13:8000/uploads/${item.photo}`,
-                }}
-                style={{width: 50, height: 50}}
-              />
-              <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemQuantity}>Items: {item.quantity}</Text>
-            </View>
-          ))}
-        </ScrollView>
+      <View style={{backgroundColor: 'white'}}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Sherin Huts</Text>
+            <Text style={styles.headerSubtitle}>@sherinHuts</Text>
+          </View>
+          <ScrollView style={{height: 360}}>
+            {cartItems.map((item, index) => (
+              <View key={index} style={styles.itemContainer}>
+                <Image
+                  source={{
+                    uri: `http://192.168.18.13:8000/uploads/${item.photo}`,
+                  }}
+                  style={styles.Image}
+                />
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    marginLeft: 10,
+                    marginTop: 10,
+                  }}>
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemQuantity}> Rs. {item.price}</Text>
+                  <Text style={styles.itemQuantity}>Items {item.quantity}</Text>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
 
-        <View style={styles.fullWidthContainer}>
-          <ImageBackground
-            source={require('../assets/BG.png')}
-            style={styles.backgroundImage}>
-            <View style={styles.summary}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: 20,
-                }}>
-                <Text style={styles.summaryText}>Sub Total</Text>
-                <Text style={styles.summaryPrice}>Rs.{total.toFixed(2)}</Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: 20,
-                }}>
-                <Text style={styles.summaryText}>Discount</Text>
-                <Text style={styles.summaryPrice}>
-                  Rs.{(total * 0.07).toFixed(2)}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: 20,
-                }}>
-                <Text style={styles.summaryText}>Delievery</Text>
-                <Text style={styles.summaryPrice}>Rs.0</Text>
-              </View>
-              <View style={styles.dottedLine} />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginTop: 10,
-                }}>
-                <Text style={styles.totalLabel}>Total</Text>
-                <Text style={styles.totalPrice}>
-                  Rs.{(total * 1.07).toFixed(2)}
-                </Text>
-              </View>
-            </View>
-          </ImageBackground>
+          <View style={styles.fullWidthContainer}>
+            <ImageBackground
+              imageStyle={{borderRadius: 20}}
+              source={require('../assets/BG.jpg')}
+              style={styles.backgroundImage}>
+              <ImageBackground
+                imageStyle={{
+                  position: 'absolute',
+                  right: 10,
+                  top: '40%',
+                  left: '50%',
+                  bottom: 10,
+                  width: '50%',
+                  height: '50%',
+                }}
+                source={require('../assets/BG2.png')}
+                style={styles.innerBackground}>
+                <View style={styles.summary}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: 20,
+                    }}>
+                    <Text style={styles.summaryText}>Sub Total</Text>
+                    <Text style={styles.summaryPrice}>
+                      Rs.{total.toFixed(2)}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: 20,
+                    }}>
+                    <Text style={styles.summaryText}>GST</Text>
+                    <Text style={styles.summaryPrice}>
+                      Rs.{(total * 0.07).toFixed(2)}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: 20,
+                    }}>
+                    <Text style={styles.summaryText}>Delievery</Text>
+                    <Text style={styles.summaryPrice}>Rs.0</Text>
+                  </View>
+                  <View style={styles.dottedLine} />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginTop: 10,
+                    }}>
+                    <Text style={styles.totalLabel}>Total</Text>
+                    <Text style={styles.totalPrice}>
+                      Rs.{(total * 1.07).toFixed(2)}
+                    </Text>
+                  </View>
+                </View>
+              </ImageBackground>
+            </ImageBackground>
+          </View>
         </View>
+        <TouchableOpacity style={styles.button} onPress={handleOrderNow}>
+          <Text style={styles.buttonText}>Order Now</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleOrderNow}>
-        <Text style={styles.buttonText}>Order Now</Text>
-      </TouchableOpacity>
     </>
   );
 };
@@ -162,12 +187,21 @@ const InvoiceScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   backgroundImage: {
     width: '100%',
+    borderRadius: 50,
   },
+
   fullWidthContainer: {
     width: '100%',
     alignItems: 'center',
-    paddingVertical: 80,
     paddingHorizontal: 12,
+    paddingVertical: 30,
+    marginBottom: 50,
+    backgroundColor: 'white',
+  },
+  Image: {
+    width: '22%',
+    height: 90,
+    borderRadius: 50,
   },
   dottedLine: {
     height: 1,
@@ -183,7 +217,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   container: {
-    flex: 1,
     backgroundColor: '#F2F2F7',
   },
   header: {
@@ -192,6 +225,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#e2e2e2',
+    marginBottom: 10,
   },
   headerTitle: {
     fontSize: 25,
@@ -205,11 +239,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit-Bold',
   },
   itemContainer: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    margin: 10,
+    overflow: 'hidden',
+    flexDirection: 'row',
     backgroundColor: 'white',
+    borderBottomLeftRadius: 50,
+    borderTopLeftRadius: 50,
+    borderColor: '#CECECE69',
+    borderWidth: 1,
+    borderRadius: 15,
   },
   itemDetails: {
     flex: 1,
@@ -221,8 +259,8 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   itemQuantity: {
-    fontSize: 16,
-    fontFamily: 'Outfit-Medium',
+    fontSize: 14,
+    fontFamily: 'Outfit-Regular',
     color: 'black',
   },
   itemPrice: {
@@ -269,6 +307,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Outfit-Medium',
     alignItems: 'center',
+    marginLeft: 140,
   },
 });
 
