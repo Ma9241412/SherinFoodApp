@@ -120,12 +120,12 @@ const UserDetailsScreen = ({route, navigation}) => {
               value={userDetails.address}
               multiline
             />
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>PLACE ORDER</Text>
-            </TouchableOpacity>
           </View>
         </ScrollView>
       )}
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>PLACE ORDER</Text>
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };
@@ -149,17 +149,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#FF6347',
-    borderRadius: 25,
-    paddingVertical: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
+    backgroundColor: '#E4A112',
+    borderRadius: 8,
+    padding: 15,
+    position: 'absolute',
+
+    bottom: 10,
+    right: 20,
+    left: 20,
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 18,
     fontFamily: 'Outfit-Regular',
+    textAlign: 'center',
   },
   title: {
     marginTop: 25,

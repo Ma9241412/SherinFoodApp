@@ -5,8 +5,8 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   ToastAndroid,
+  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,9 +21,20 @@ const ProductDetailsScreen = ({route, navigation}) => {
 
   const updateQuantity = operation => {
     setQuantity(prevQuantity => {
-      return operation === 'increase'
-        ? prevQuantity + 1
-        : Math.max(1, prevQuantity - 1);
+      const newQuantity =
+        operation === 'increase'
+          ? prevQuantity + 1
+          : Math.max(1, prevQuantity - 1);
+
+      AsyncStorage.setItem('quantity', newQuantity.toString())
+        .then(() =>
+          console.log('Quantity updated in AsyncStorage:', newQuantity),
+        )
+        .catch(error =>
+          console.error('Failed to update quantity in AsyncStorage:', error),
+        );
+
+      return newQuantity;
     });
   };
 
@@ -41,10 +52,13 @@ const ProductDetailsScreen = ({route, navigation}) => {
         return;
       }
 
-      cart.push({
+      const cartItem = {
         ...newItem,
-        totalPrice: (newItem.price * newItem.quantity).toFixed(2),
-      });
+        quantity: quantity,
+        totalPrice: (newItem.price * quantity).toFixed(2),
+      };
+
+      cart.push(cartItem);
 
       await AsyncStorage.setItem('cartItems', JSON.stringify(cart));
 
@@ -58,6 +72,7 @@ const ProductDetailsScreen = ({route, navigation}) => {
       ToastAndroid.show('Failed to add item to cart', ToastAndroid.LONG);
     }
   };
+
   const totalPrice = (item.price * quantity).toFixed(2);
 
   return (
@@ -71,7 +86,7 @@ const ProductDetailsScreen = ({route, navigation}) => {
         <Icon name="ellipsis-v" size={24} color="#000" />
       </View>
 
-      <View style={{paddingHorizontal: 10}}>
+      <ScrollView style={{paddingHorizontal: 10}}>
         <View style={styles.quantityContainer1}>
           <Image
             source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
@@ -96,9 +111,24 @@ const ProductDetailsScreen = ({route, navigation}) => {
             </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
 
-      <View style={{paddingHorizontal: 10}}>
+      <View
+        style={{
+          paddingHorizontal: 10,
+          position: 'absolute',
+          bottom: 90,
+          right: 4,
+          left: 4,
+        }}>
+        <Text
+          style={{
+            paddingHorizontal: 4,
+            color: 'black',
+            fontFamily: 'Outfit-Medium',
+          }}>
+          Quantity
+        </Text>
         <View style={styles.quantityContainer}>
           <TouchableOpacity
             onPress={() => updateQuantity('decrease')}
@@ -111,9 +141,7 @@ const ProductDetailsScreen = ({route, navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-      {/* <View style={styles.details}>
-        <Text style={styles.description}>{item.description}</Text>
-      </View> */}
+
       <View style={styles.orderButtonContainer}>
         <View>
           <Text style={styles.description2}>Rs .{totalPrice}</Text>
@@ -133,7 +161,7 @@ const ProductDetailsScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F2F2F7',
   },
   header: {
     flexDirection: 'row',
@@ -168,9 +196,9 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   image: {
-    width: '20%',
-    height: 80,
-    borderRadius: 40,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
   },
   quantityContainer: {
     flexDirection: 'row',
@@ -178,11 +206,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     alignItems: 'center',
-    marginTop: 30,
     borderColor: '#F2F2F7',
     borderWidth: 2,
     borderRadius: 10,
     paddingVertical: 8,
+    backgroundColor: 'white',
   },
   quantityContainer1: {
     flexDirection: 'row',
@@ -190,9 +218,10 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderColor: '#CECECE69',
     borderWidth: 1,
-    backgroundColor: '#F6F6F6',
-    borderTopLeftRadius: 50,
-    borderBottomLeftRadius: 50,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 90,
+    borderBottomLeftRadius: 90,
+    borderRadius: 15,
   },
   quantity: {
     marginHorizontal: 16,

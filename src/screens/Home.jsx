@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -10,12 +10,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
-import debounce from 'lodash/debounce';
 import {Products} from '../components/Products';
-import {HeaderComp} from '../components/Header';
 import MainHeader from '../components/MainHeader';
 import Sidebar from '../components/SideBar';
-import LinearGradient from 'react-native-linear-gradient';
 
 export const HomeScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
@@ -27,7 +24,7 @@ export const HomeScreen = ({navigation}) => {
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };
-
+  const initialLoad = useRef(true);
   const navigateToCart = () => {
     navigation.navigate('Cart');
   };
@@ -36,12 +33,13 @@ export const HomeScreen = ({navigation}) => {
       setLoading(true);
       try {
         let endpoint = 'http://192.168.18.13:8000/api/v1/category/get-category';
-        if (searchTerm) {
-          endpoint += `?search=${encodeURIComponent(searchTerm.trim())}`;
-        }
 
         const response = await axios.get(endpoint);
         setCategories(response.data.category);
+        if (response.data.category.length > 0 && initialLoad.current) {
+          setSelectedCategoryId(response.data.category[0]._id);
+          initialLoad.current = false;
+        }
       } catch (error) {
         console.error('Error fetching categories', error);
       } finally {
@@ -50,7 +48,7 @@ export const HomeScreen = ({navigation}) => {
     };
 
     fetchCategories();
-  }, [searchTerm]);
+  }, []);
 
   const handleSearchChange = newSearchTerm => {
     setSearchTerm(newSearchTerm);
@@ -86,8 +84,6 @@ export const HomeScreen = ({navigation}) => {
         onMenuPress={toggleSidebar}
         onCartPress={navigateToCart}
       />
-      <Sidebar visible={sidebarVisible} onClose={toggleSidebar} />
-
       <ScrollView>
         {loading ? (
           <View style={styles.loaderContainer}>
@@ -116,7 +112,10 @@ export const HomeScreen = ({navigation}) => {
           Quick Orders
         </Text>
 
-        <Products selectedCategoryId={selectedCategoryId} />
+        <Products
+          searchTerm={searchTerm}
+          selectedCategoryId={selectedCategoryId}
+        />
       </ScrollView>
     </View>
   );
@@ -125,7 +124,7 @@ export const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F2F2F7',
   },
   searchContainer: {
     backgroundColor: 'white',

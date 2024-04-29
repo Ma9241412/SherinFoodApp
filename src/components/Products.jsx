@@ -12,47 +12,62 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-export const Products = ({selectedCategoryId}) => {
+export const Products = ({selectedCategoryId, searchTerm}) => {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [noProductsMessage, setNoProductsMessage] = useState('');
-  const [cart, setCart] = useState([]);
+  const [currentCategoryId, setCurrentCategoryId] =
+    useState(selectedCategoryId);
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          'http://192.168.18.13:8000/api/v1/product/get-products',
-        );
-        const filteredProducts = response.data.products.filter(
-          product => product.category._id === selectedCategoryId,
-        );
+        let endpoint = 'http://192.168.18.13:8000/api/v1/product/get-products';
+
+        if (selectedCategoryId) {
+          endpoint += `?categoryId=${selectedCategoryId}`;
+        }
+
+        const response = await axios.get(endpoint);
+        let filteredProducts = response.data.products;
+
+        if (searchTerm) {
+          filteredProducts = filteredProducts.filter(product =>
+            product.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          );
+        }
+
         if (filteredProducts.length > 0) {
-          const updatedProducts = filteredProducts.map(item => {
-            const {category, ...rest} = item;
-            return rest;
-          });
+          const updatedProducts = filteredProducts
+            .filter(product => product.category._id === selectedCategoryId)
+            .map(item => {
+              const {category, ...rest} = item;
+              return rest;
+            });
           setProducts(updatedProducts);
         } else {
+          setProducts([]);
           Alert.alert(
             'No Items Available',
-            'There are no available items in this category',
+            'There are no available items matching your search',
             [{text: 'OK'}],
           );
         }
       } catch (error) {
         console.error('Error fetching products:', error);
+        Alert.alert(
+          'Error',
+          'Failed to fetch products. Please try again later.',
+          [{text: 'OK'}],
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    if (selectedCategoryId) {
-      fetchProducts();
-    }
-  }, [selectedCategoryId]);
+    fetchProducts();
+  }, [selectedCategoryId, searchTerm]);
 
   const handlePress = item => {
     console.log(item);
@@ -118,11 +133,12 @@ const styles = StyleSheet.create({
     margin: 10,
     overflow: 'hidden',
     flexDirection: 'row',
-    backgroundColor: '#F6F6F6',
+    backgroundColor: 'white',
     borderBottomLeftRadius: 50,
     borderTopLeftRadius: 50,
     borderColor: '#CECECE69',
     borderWidth: 1,
+    borderRadius: 15,
   },
   foodItemImage: {
     width: '25%',
@@ -147,7 +163,7 @@ const styles = StyleSheet.create({
   favIcon: {
     position: 'absolute',
     right: 10,
-    top: 10,
+    top: 2,
     borderRadius: 20,
     flexDirection: 'row',
     alignItems: 'center',

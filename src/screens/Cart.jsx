@@ -8,9 +8,11 @@ import {
   Image,
   ToastAndroid,
   Alert,
+  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import InvoiceScreen from './Invoice';
 
 const CartScreen = ({navigation}) => {
   const [cartItems, setCartItems] = useState([]);
@@ -176,42 +178,43 @@ const CartScreen = ({navigation}) => {
   );
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={cartItems}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        contentContainerStyle={styles.listContainer}
-        ListFooterComponent={
-          <View style={styles.footer}>
-            <TouchableOpacity
-              style={[
-                styles.checkoutButton,
-                cartItems.length === 0 && styles.disabledButton,
-              ]}
-              activeOpacity={0.7}
-              onPress={proceedToCheckout}
-              disabled={cartItems.length === 0}>
-              <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
-            </TouchableOpacity>
-          </View>
-        }
-        ListEmptyComponent={
-          <Text style={styles.emptyMessage}>Your cart is empty.</Text>
-        }
-        showsVerticalScrollIndicator={false}
-      />
-    </View>
+    <>
+      <ScrollView style={styles.container}>
+        <FlatList
+          data={cartItems}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={
+            <Text style={styles.emptyMessage}>Your cart is empty.</Text>
+          }
+          showsVerticalScrollIndicator={false}
+        />
+      </ScrollView>
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={[
+            styles.checkoutButton,
+            cartItems.length === 0 && styles.disabledButton,
+          ]}
+          activeOpacity={0.7}
+          onPress={proceedToCheckout}
+          disabled={cartItems.length === 0}>
+          <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F2F2F7',
   },
   listContainer: {
     padding: 8,
+    marginBottom: 50,
   },
   header: {
     fontSize: 24,
@@ -222,7 +225,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit-SemiBold',
   },
   card: {
-    backgroundColor: '#F6F6F6',
+    backgroundColor: 'white',
     borderRadius: 8,
     marginVertical: 10,
     marginHorizontal: 16,
@@ -280,16 +283,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#E4A112',
     borderRadius: 8,
     padding: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 20,
-    elevation: 3,
+    position: 'absolute',
+
+    bottom: 10,
+    right: 10,
+    left: 10,
   },
   checkoutButtonText: {
     color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 15,
     fontFamily: 'Outfit-Bold',
+    textAlign: 'center',
   },
   emptyMessage: {
     textAlign: 'center',
@@ -305,8 +310,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    paddingHorizontal: 40,
-    paddingVertical: 5,
+    paddingHorizontal: 30,
+    paddingVertical: 7,
     borderBottomRightRadius: 10,
     borderTopLeftRadius: 10,
   },
