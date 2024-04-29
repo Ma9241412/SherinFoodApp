@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -15,69 +16,74 @@ const OrdersScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const userDetailsString = await AsyncStorage.getItem('userDetails');
-        let userDetails = JSON.parse(userDetailsString);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchOrders = async () => {
+        setLoading(true);
+        try {
+          const userDetailsString = await AsyncStorage.getItem('userDetails');
+          let userDetails = JSON.parse(userDetailsString);
 
-        const userId = userDetails?.userId;
-        if (!userId) {
-          setError('User ID not found');
-          return;
+          const userId = userDetails?.userId;
+          if (!userId) {
+            setError('Orders not found');
+            return;
+          }
+
+          const response = await axios.get(
+            `http://192.168.18.13:8000/api/v1/orders/user/${userId}`,
+          );
+          console.log('tetsting', response.data);
+          if (
+            response.data &&
+            response.data.data &&
+            response.data.data.length > 0
+          ) {
+            setOrders(response.data.data);
+          } else {
+            setError('No orders placed yet');
+          }
+        } catch (err) {
+          setError('Failed to fetch orders');
+          console.error('Failed to fetch orders', err);
+        } finally {
+          setLoading(false);
         }
+      };
 
-        const response = await axios.get(
-          `http://192.168.18.13:8000/api/v1/orders/user/${userId}`,
-        );
-        if (
-          response.data &&
-          response.data.data &&
-          response.data.data.length > 0
-        ) {
-          setOrders(response.data.data);
-        } else {
-          setError('No orders placed yet');
-        }
-      } catch (err) {
-        setError('Failed to fetch orders');
-        console.error('Failed to fetch orders', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      fetchOrders();
 
-    fetchOrders();
-  }, []);
+      return () => {};
+    }, []),
+  );
 
   const renderOrderItem = ({item}) => (
-    <>
-      <View style={styles.orderCard}>
-        <Image
-          source={{
-            uri: `http://192.168.18.13:8000/uploads/${item.cartItems.map(
-              cartItem => cartItem.product.photo,
-            )}`,
-          }}
-          style={styles.productImage}
-        />
-        <View style={styles.orderDetails}>
-          <Text style={styles.productName}>
-            {item.cartItems.map(cartItem => cartItem.product.name).join(', ')}
-          </Text>
-          <Text style={[styles.productCount, styles.tag]}>
-            {item.cartItems.map(cartItem => cartItem.product.quantity)} Items
-          </Text>
-          <View style={styles.detailsRow}>
-            <Text style={styles.detailValue}>{item.total}.Rs</Text>
-            <View style={styles.statusBG}>
-              <Text style={styles.status}>{item.status}</Text>
-            </View>
+    <View style={styles.orderCard}>
+      <Image
+        source={{
+          uri: `http://192.168.18.13:8000/uploads/${item.cartItems[0].product.photo}`,
+        }}
+        style={styles.productImage}
+      />
+      <View style={styles.orderDetails}>
+        <Text style={styles.productName}>
+          {item.cartItems.map(cartItem => cartItem.product.name).join(', ')}
+        </Text>
+        <Text style={styles.productCount}>
+          {item.cartItems.reduce(
+            (total, cartItem) => total + cartItem.product.quantity,
+            0,
+          )}{' '}
+          Items
+        </Text>
+        <View style={styles.detailsRow}>
+          <Text style={styles.detailValue}>{item.total} Rs</Text>
+          <View style={styles.statusBG}>
+            <Text style={styles.status}>{item.status}</Text>
           </View>
         </View>
       </View>
-    </>
+    </View>
   );
 
   return (

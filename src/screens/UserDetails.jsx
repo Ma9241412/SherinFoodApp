@@ -22,34 +22,46 @@ const UserDetailsScreen = ({route, navigation}) => {
     phone: '',
     address: '',
   });
-  console.log('test', cartItems);
 
   const handleInputChange = (name, value) => {
-    setUserDetails({...userDetails, [name]: value.trim()});
+    setUserDetails(prevDetails => ({...prevDetails, [name]: value}));
   };
 
-  //Create Order
+  const handleInputBlur = name => {
+    setUserDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: prevDetails[name].trim(),
+    }));
+  };
+
+  // Create Order
   const handleSubmit = async () => {
     const allFieldsFilled = Object.values(userDetails).every(
-      field => field.length > 0,
+      field => field.trim().length > 0,
     );
 
     if (!allFieldsFilled) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
+
     setIsLoading(true);
-    const formattedCartItems = cartItems.map(item => {
-      return {
-        ...item,
-        product: item._id,
-      };
-    });
+    const formattedCartItems = cartItems.map(item => ({
+      ...item,
+      product: item._id,
+    }));
+    const trimmedDetails = {
+      name: userDetails.name.trim(),
+      email: userDetails.email.trim(),
+      phone: userDetails.phone.trim(),
+      address: userDetails.address.trim(),
+    };
     const orderDetails = {
-      userDetails,
+      userDetails: trimmedDetails,
       cartItems: formattedCartItems,
       total,
     };
+
     try {
       const response = await axios.post(
         'http://192.168.18.13:8000/api/v1/orders/create-order',
@@ -61,16 +73,12 @@ const UserDetailsScreen = ({route, navigation}) => {
         },
       );
       console.log('products', response.data);
-      setTimeout(() => {
-        setIsLoading(false);
-        if (response.status === 200 || response.status === 201) {
-          Alert.alert('Success', 'Your order has been placed.', [
-            {text: 'OK', onPress: () => navigation.navigate('success')},
-          ]);
-        } else {
-          Alert.alert('Error', 'Something went wrong with your order.');
-        }
-      }, 3000);
+      setIsLoading(false);
+      if (response.status === 200 || response.status === 201) {
+        navigation.navigate('success');
+      } else {
+        Alert.alert('Error', 'Something went wrong with your order.');
+      }
     } catch (error) {
       setIsLoading(false);
       console.error(
@@ -97,6 +105,7 @@ const UserDetailsScreen = ({route, navigation}) => {
               style={styles.input}
               placeholder="Full Name"
               onChangeText={text => handleInputChange('name', text)}
+              onBlur={() => handleInputBlur('name')}
               value={userDetails.name}
             />
             <TextInput
@@ -104,6 +113,7 @@ const UserDetailsScreen = ({route, navigation}) => {
               placeholder="Email Address"
               keyboardType="email-address"
               onChangeText={text => handleInputChange('email', text)}
+              onBlur={() => handleInputBlur('email')}
               value={userDetails.email}
             />
             <TextInput
@@ -111,12 +121,14 @@ const UserDetailsScreen = ({route, navigation}) => {
               placeholder="Phone Number"
               keyboardType="phone-pad"
               onChangeText={text => handleInputChange('phone', text)}
+              onBlur={() => handleInputBlur('phone')}
               value={userDetails.phone}
             />
             <TextInput
               style={styles.input}
               placeholder="Delivery Address"
               onChangeText={text => handleInputChange('address', text)}
+              onBlur={() => handleInputBlur('address')}
               value={userDetails.address}
               multiline
             />
@@ -153,7 +165,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 15,
     position: 'absolute',
-
     bottom: 10,
     right: 20,
     left: 20,

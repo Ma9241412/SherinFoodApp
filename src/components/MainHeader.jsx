@@ -11,6 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native'; // Assuming you are using React Navigation
 
 const MainHeader = ({
   onCartPress,
@@ -23,20 +24,25 @@ const MainHeader = ({
   const [profilePictureUri, setProfilePictureUri] = useState(null);
   const [cartItemCount, setCartItemCount] = useState(0);
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const cartItemsJson = await AsyncStorage.getItem('cartItems');
-        const cartItems = cartItemsJson ? JSON.parse(cartItemsJson) : [];
-        setCartItemCount(cartItems.length);
-      } catch (error) {
-        console.error('Failed to load cart items', error);
-      }
-    };
+  const fetchCartItems = async () => {
+    try {
+      const cartItemsJson = await AsyncStorage.getItem('cartItems');
+      const cartItems = cartItemsJson ? JSON.parse(cartItemsJson) : [];
+      setCartItemCount(cartItems.length);
+    } catch (error) {
+      console.error('Failed to load cart items', error);
+    }
+  };
 
+  useEffect(() => {
     fetchCartItems();
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchCartItems();
+    }, []),
+  );
   const renderProfilePicture = profilePicture
     ? {uri: profilePicture}
     : require('../assets/dummy.png');
@@ -55,24 +61,29 @@ const MainHeader = ({
     ]);
   };
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const userDetails = await AsyncStorage.getItem('userDetails');
-        console.log(userDetails);
-        if (userDetails !== null) {
-          const {name, image} = JSON.parse(userDetails);
-          setUserName(name);
-          setProfilePictureUri(image);
-        }
-      } catch (error) {
-        console.error('Failed to load the user details', error);
+  const fetchUserDetails = async () => {
+    try {
+      const userDetails = await AsyncStorage.getItem('userDetails');
+      console.log(userDetails);
+      if (userDetails !== null) {
+        const {name, image} = JSON.parse(userDetails);
+        setUserName(name);
+        setProfilePictureUri(image);
       }
-    };
+    } catch (error) {
+      console.error('Failed to load the user details', error);
+    }
+  };
 
+  useEffect(() => {
     fetchUserDetails();
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchUserDetails();
+    }, []),
+  );
   const imageSource = profilePictureUri
     ? {uri: `http://192.168.18.13:8000/uploads/${profilePictureUri}`}
     : require('../assets/dummy.png');

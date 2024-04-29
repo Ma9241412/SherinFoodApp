@@ -38,34 +38,37 @@ const ProductDetailsScreen = ({route, navigation}) => {
     });
   };
 
-  const handleOrderPress = async newItem => {
+  const handleAddCart = async (newItem, quantity) => {
+    console.log(newItem);
+    console.log(quantity);
     try {
       const existingCart = await AsyncStorage.getItem('cartItems');
+      console.log('Existing Cart:', existingCart);
+
       let cart = existingCart ? JSON.parse(existingCart) : [];
 
-      if (newItem._id === undefined) {
-        console.error('New item does not have an _id:', newItem);
-        ToastAndroid.show(
-          'Cannot add item without ID to cart',
-          ToastAndroid.LONG,
-        );
-        return;
+      const existingItemIndex = cart.findIndex(
+        item => item._id === newItem._id,
+      );
+
+      if (existingItemIndex !== -1) {
+        cart[existingItemIndex].quantity += quantity;
+        cart[existingItemIndex].totalPrice = (
+          cart[existingItemIndex].price * cart[existingItemIndex].quantity
+        ).toFixed(2);
+      } else {
+        const cartItem = {
+          ...newItem,
+          quantity: quantity,
+          totalPrice: (newItem.price * quantity).toFixed(2),
+        };
+        cart.push(cartItem);
       }
 
-      const cartItem = {
-        ...newItem,
-        quantity: quantity,
-        totalPrice: (newItem.price * quantity).toFixed(2),
-      };
-
-      cart.push(cartItem);
-
       await AsyncStorage.setItem('cartItems', JSON.stringify(cart));
-
-      console.log('Updated cart:', cart);
+      console.log('Updated Cart:', cart);
 
       ToastAndroid.show('Item Added Successfully to Cart', ToastAndroid.SHORT);
-
       navigation.goBack();
     } catch (error) {
       console.error('Failed to add item to cart:', error);
@@ -149,7 +152,7 @@ const ProductDetailsScreen = ({route, navigation}) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => handleOrderPress(item)}
+          onPress={() => handleAddCart(item, quantity)}
           style={styles.orderButton}>
           <Text style={styles.orderButtonText}>Add to cart </Text>
         </TouchableOpacity>
@@ -196,8 +199,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   image: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
     borderRadius: 60,
   },
   quantityContainer: {
