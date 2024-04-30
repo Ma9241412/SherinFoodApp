@@ -17,6 +17,16 @@ const OrdersScreen = ({navigation}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const statusColors = {
+    pending: '#E38A00',
+    processing: '#E60023',
+    completed: 'blue',
+    delivered: '#04A200',
+  };
+
+  const getStatusColor = status =>
+    statusColors[status.toLowerCase()] || '#808080';
+
   useFocusEffect(
     React.useCallback(() => {
       const fetchOrders = async () => {
@@ -81,7 +91,11 @@ const OrdersScreen = ({navigation}) => {
         </Text>
         <View style={styles.detailsRow}>
           <Text style={styles.detailValue}>{item.total} Rs</Text>
-          <View style={styles.statusBG}>
+          <View
+            style={[
+              styles.statusBG,
+              {backgroundColor: getStatusColor(item.status)},
+            ]}>
             <Text style={styles.status}>{item.status}</Text>
           </View>
         </View>
@@ -181,7 +195,6 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   statusBG: {
-    backgroundColor: 'orange',
     paddingHorizontal: 20,
     paddingVertical: 5,
     bottom: 0,
@@ -189,6 +202,11 @@ const styles = StyleSheet.create({
     top: 10,
     borderBottomRightRadius: 15,
     borderTopLeftRadius: 15,
+  },
+  status: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: 'white', // Ensure text color contrasts with background
   },
 
   errorText: {
