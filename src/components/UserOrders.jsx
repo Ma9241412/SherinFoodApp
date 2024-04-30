@@ -6,12 +6,13 @@ import {
   ActivityIndicator,
   StyleSheet,
   Image,
+  TouchableOpacity,
 } from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const OrdersScreen = () => {
+const OrdersScreen = ({navigation}) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -58,7 +59,9 @@ const OrdersScreen = () => {
   );
 
   const renderOrderItem = ({item}) => (
-    <View style={styles.orderCard}>
+    <TouchableOpacity
+      style={styles.orderCard}
+      onPress={() => navigation.navigate('orderdetail', {order: item})}>
       <Image
         source={{
           uri: `http://192.168.18.13:8000/uploads/${item.cartItems[0].product.photo}`,
@@ -71,7 +74,7 @@ const OrdersScreen = () => {
         </Text>
         <Text style={styles.productCount}>
           {item.cartItems.reduce(
-            (total, cartItem) => total + cartItem.product.quantity,
+            (total, cartItem) => total + cartItem.quantity,
             0,
           )}{' '}
           Items
@@ -83,22 +86,25 @@ const OrdersScreen = () => {
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      {loading ? (
-        <ActivityIndicator size="large" color="#E4A112" />
-      ) : error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : (
-        <FlatList
-          data={orders}
-          renderItem={renderOrderItem}
-          keyExtractor={order => order._id}
-        />
-      )}
+      <Text style={styles.title}>Your Orders</Text>
+      <>
+        {loading ? (
+          <ActivityIndicator size="large" color="#E4A112" />
+        ) : error ? (
+          <Text style={styles.errorText}>{error}</Text>
+        ) : (
+          <FlatList
+            data={orders}
+            renderItem={renderOrderItem}
+            keyExtractor={order => order._id}
+          />
+        )}
+      </>
     </View>
   );
 };
@@ -107,6 +113,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  title: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    color: 'black',
+    fontFamily: 'Outfit-Bold',
+    fontSize: 25,
   },
   orderCard: {
     flexDirection: 'row',
@@ -118,6 +131,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderTopRightRadius: 10,
     borderBottomRightRadius: 20,
+    margin: 15,
   },
   productImage: {
     width: 100,

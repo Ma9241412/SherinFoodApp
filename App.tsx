@@ -14,6 +14,7 @@ import CartScreen from './src/screens/Cart';
 import RegisterScreen from './src/screens/Register';
 import OrdersScreen from './src/components/UserOrders';
 import { SplashScreen } from './src/screens/Splash';
+import { OrderDetails } from './src/components/OrderDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +49,8 @@ function App() {
           <Stack.Screen name="userdetails" component={UserDetailsScreen} options={{ headerShown: false }} />
           <Stack.Screen name="success" component={OrderConfirmationScreen} options={{ headerShown: false }} />
           <Stack.Screen name="orders" component={OrdersScreen} options={{ headerShown: true }} />
+          <Stack.Screen name="orderdetail" component={OrderDetails} options={{ headerShown: true }} />
+
 
 
         </Stack.Navigator>

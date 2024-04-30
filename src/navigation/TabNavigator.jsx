@@ -1,48 +1,40 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5'; // Make sure to use FontAwesome5 to access the latest icons
+import OrdersScreen from '../components/UserOrders';
 import CartScreen from '../screens/Cart';
 import {HomeScreen} from '../screens/Home';
-import OrdersScreen from '../components/UserOrders';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => (
   <Tab.Navigator
-    initialRouteName="login"
+    initialRouteName="Home"
     screenOptions={({route}) => ({
       tabBarIcon: ({focused, color, size}) => {
         let iconName;
 
-        if (route.name === 'login') {
-          iconName = focused ? 'sign-in' : 'sign-in';
-        } else if (route.name === 'home') {
-          iconName = focused ? 'home' : 'home';
-        } else if (route.name === 'invoice') {
-          iconName = focused ? 'file-text' : 'file-text-o';
-        } else if (route.name === 'cart') {
-          iconName = focused ? 'shopping-cart' : 'shopping-cart';
+        if (route.name === 'Home') {
+          iconName = 'home';
         } else if (route.name === 'orders') {
-          iconName = focused ? 'user' : 'list-alt';
+          iconName = 'history';
+        } else if (route.name === 'Cart') {
+          iconName = 'shopping-cart';
         }
 
-        return <Icon name={iconName} size={size} color={color} />;
+        return (
+          <Icon name={iconName} size={size} color={color} solid={focused} />
+        );
       },
       tabBarActiveTintColor: '#E4A112',
       tabBarInactiveTintColor: '#9098B1',
+      tabBarShowLabel: false,
       headerShown: false,
+      tabBarStyle: {backgroundColor: '#FFFFFF'},
     })}>
-    <Tab.Screen name="home" component={HomeScreen} />
-    <Tab.Screen
-      name="cart"
-      component={CartScreen}
-      options={{headerShown: false}}
-    />
-    <Tab.Screen
-      name="orders"
-      component={OrdersScreen}
-      options={{headerShown: false}}
-    />
+    <Tab.Screen name="Home" component={HomeScreen} />
+    <Tab.Screen name="orders" component={OrdersScreen} />
+    <Tab.Screen name="Cart" component={CartScreen} />
   </Tab.Navigator>
 );
 

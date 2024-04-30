@@ -86,7 +86,7 @@ const MainHeader = ({
   );
   const imageSource = profilePictureUri
     ? {uri: `http://192.168.18.13:8000/uploads/${profilePictureUri}`}
-    : require('../assets/dummy.png');
+    : require('../assets/avatar.png');
 
   return (
     <View style={styles.container}>

@@ -12,26 +12,30 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import InvoiceScreen from './Invoice';
+import {useFocusEffect} from '@react-navigation/native';
 
 const CartScreen = ({navigation}) => {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
 
-  useEffect(() => {
-    const loadCartItems = async () => {
-      try {
-        const storedCartItems = await AsyncStorage.getItem('cartItems');
-        console.log('storedItems', storedCartItems);
-        if (storedCartItems !== null) {
-          setCartItems(JSON.parse(storedCartItems));
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadCartItems = async () => {
+        try {
+          const storedCartItems = await AsyncStorage.getItem('cartItems');
+          if (storedCartItems !== null) {
+            setCartItems(JSON.parse(storedCartItems));
+          }
+        } catch (error) {
+          console.error('Failed to load cart items:', error);
         }
-      } catch (error) {
-        console.error('Failed to load cart items:', error);
-      }
-    };
-    loadCartItems();
-  }, []);
+      };
+
+      loadCartItems();
+
+      return () => {};
+    }, []),
+  );
 
   useEffect(() => {
     AsyncStorage.setItem('cartItems', JSON.stringify(cartItems))
@@ -48,22 +52,11 @@ const CartScreen = ({navigation}) => {
   }, [cartItems]);
 
   const calculateTotal = () => {
-    const groupedItems = cartItems.reduce((accumulator, currentItem) => {
-      if (accumulator[currentItem.id]) {
-        accumulator[currentItem.id].quantity += currentItem.quantity;
-      } else {
-        accumulator[currentItem.id] = {...currentItem};
-      }
-      return accumulator;
-    }, {});
+    const newTotal = cartItems.reduce((accumulator, currentItem) => {
+      return accumulator + currentItem.price * currentItem.quantity;
+    }, 0);
 
-    const groupedItemsArray = Object.values(groupedItems);
-
-    const newTotal = groupedItemsArray.reduce(
-      (accumulator, item) => accumulator + item.price * item.quantity,
-      0,
-    );
-
+    console.log('newTotal', newTotal);
     setTotal(newTotal);
   };
 

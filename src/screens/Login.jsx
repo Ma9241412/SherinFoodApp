@@ -9,6 +9,7 @@ import {
   Animated,
   ToastAndroid,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useAuth} from '../AuthContext';
@@ -20,34 +21,51 @@ const LoginScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const {setIsAuthenticated} = useAuth();
 
+  const HTTP_STATUS_OK = 200;
+
   const handleLoginPress = async () => {
     setIsLoading(true);
+
     try {
       const response = await axios.post(
         'http://192.168.18.13:8000/api/v1/auth/login',
         {email, password},
         {headers: {'Content-Type': 'application/json'}},
       );
-      const data = await response.data;
-      setIsLoading(false);
-      if (response.status === 200) {
+
+      if (response.status === HTTP_STATUS_OK) {
+        const data = response.data;
         const expiryDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+
         await AsyncStorage.setItem('token', data.token);
-        await AsyncStorage.setItem('tokenExpiry', expiryDate.toString());
+        await AsyncStorage.setItem('tokenExpiry', expiryDate.toISOString());
         await AsyncStorage.setItem('userDetails', JSON.stringify(data.user));
 
-        console.log('Login successful, user details stored:', data.user);
+        ToastAndroid.show('Login successful!', ToastAndroid.SHORT);
         navigation.navigate('Home');
       } else {
-        ToastAndroid.show(
-          data.message || 'An error occurred',
-          ToastAndroid.LONG,
-        );
+        throw new Error(response.data.message || 'An unknown error occurred');
       }
     } catch (error) {
+      ToastAndroid.show(
+        error.response?.data?.message || 'Login failed',
+        ToastAndroid.LONG,
+      );
+      if (error.response?.status === 401) {
+        Alert.alert(
+          'Login Failed',
+          'The email or password you entered is incorrect. Please try again.',
+          [{text: 'OK'}],
+        );
+      } else {
+        Alert.alert(
+          'Login Error',
+          'An unexpected error occurred. Please try again later.',
+          [{text: 'OK'}],
+        );
+      }
+    } finally {
       setIsLoading(false);
-      console.error('Login failed:', error);
-      ToastAndroid.show('Login failed', ToastAndroid.LONG);
     }
   };
 
