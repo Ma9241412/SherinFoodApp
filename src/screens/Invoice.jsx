@@ -14,7 +14,7 @@ import axios from 'axios';
 
 const InvoiceScreen = ({route, navigation}) => {
   const {cartItems, total} = route.params;
-  console.log('invoice', cartItems);
+  console.log('invoice', total);
 
   const handleOrderNow = async () => {
     try {
@@ -132,9 +132,7 @@ const InvoiceScreen = ({route, navigation}) => {
                       marginBottom: 20,
                     }}>
                     <Text style={styles.summaryText}>Sub Total</Text>
-                    <Text style={styles.summaryPrice}>
-                      Rs.{total.toFixed(2)}
-                    </Text>
+                    <Text style={styles.summaryPrice}>Rs.{total}</Text>
                   </View>
                   <View
                     style={{
@@ -143,9 +141,9 @@ const InvoiceScreen = ({route, navigation}) => {
                       justifyContent: 'space-between',
                       marginBottom: 20,
                     }}>
-                    <Text style={styles.summaryText}>GST</Text>
+                    <Text style={styles.summaryText}>Discount (10%)</Text>
                     <Text style={styles.summaryPrice}>
-                      Rs.{(total * 0.07).toFixed(2)}
+                      -Rs.{(total * 0.1).toFixed(2)}
                     </Text>
                   </View>
                   <View
@@ -166,9 +164,11 @@ const InvoiceScreen = ({route, navigation}) => {
                       justifyContent: 'space-between',
                       marginTop: 10,
                     }}>
-                    <Text style={styles.totalLabel}>Total</Text>
+                    <Text style={styles.totalLabel}>
+                      Total after 10% Discount
+                    </Text>
                     <Text style={styles.totalPrice}>
-                      Rs.{(total * 1.07).toFixed(2)}
+                      Rs.{(total - total * 0.1).toFixed(2)}
                     </Text>
                   </View>
                 </View>

@@ -48,11 +48,22 @@ const CartScreen = ({navigation}) => {
   }, [cartItems]);
 
   const calculateTotal = () => {
-    const newTotal = cartItems.reduce(
-      (accumulator, currentItem) =>
-        accumulator + currentItem.price * currentItem.quantity,
+    const groupedItems = cartItems.reduce((accumulator, currentItem) => {
+      if (accumulator[currentItem.id]) {
+        accumulator[currentItem.id].quantity += currentItem.quantity;
+      } else {
+        accumulator[currentItem.id] = {...currentItem};
+      }
+      return accumulator;
+    }, {});
+
+    const groupedItemsArray = Object.values(groupedItems);
+
+    const newTotal = groupedItemsArray.reduce(
+      (accumulator, item) => accumulator + item.price * item.quantity,
       0,
     );
+
     setTotal(newTotal);
   };
 
@@ -102,7 +113,6 @@ const CartScreen = ({navigation}) => {
         navigation.navigate('Login');
       };
 
-      // If userDetails exist, go ahead to invoice
       if (userDetails !== null) {
         navigateToInvoice();
       } else {
@@ -137,7 +147,8 @@ const CartScreen = ({navigation}) => {
         />
         <View style={styles.itemInfo}>
           <Text style={styles.itemName}>{item.name}</Text>
-          <Text style={styles.itemPrice}>Rs.{total.toFixed(2)}</Text>
+          <Text style={styles.itemPrice}>Rs.{item.price.toFixed(2)}</Text>
+
           <View style={styles.quantityContainer}>
             <TouchableOpacity
               style={styles.button}
