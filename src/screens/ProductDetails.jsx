@@ -92,7 +92,9 @@ const ProductDetailsScreen = ({route, navigation}) => {
       <ScrollView style={{paddingHorizontal: 10}}>
         <View style={styles.quantityContainer1}>
           <Image
-            source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
+            source={{
+              uri: `https://shc.fayazk.com/uploads/${item.photo}`,
+            }}
             style={styles.image}
           />
           <View style={{flexDirection: 'column', marginLeft: 10}}>

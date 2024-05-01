@@ -135,7 +135,7 @@ const CartScreen = ({navigation}) => {
     <View style={styles.card}>
       <View style={styles.itemContainer}>
         <Image
-          source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
+          source={{uri: `https://shc.fayazk.com/uploads/${item.photo}`}}
           style={styles.itemImage}
         />
         <View style={styles.itemInfo}>

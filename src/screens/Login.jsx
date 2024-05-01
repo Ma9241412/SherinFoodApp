@@ -6,12 +6,10 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Animated,
   ToastAndroid,
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {useAuth} from '../AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -28,10 +26,11 @@ const LoginScreen = ({navigation}) => {
 
     try {
       const response = await axios.post(
-        'http://192.168.18.13:8000/api/v1/auth/login',
+        'https://shc.fayazk.com/api/v1/auth/login',
         {email, password},
         {headers: {'Content-Type': 'application/json'}},
       );
+      console.log('LoginTest', response);
 
       if (response.status === HTTP_STATUS_OK) {
         const data = response.data;

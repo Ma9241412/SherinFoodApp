@@ -42,7 +42,7 @@ const OrdersScreen = ({navigation}) => {
           }
 
           const response = await axios.get(
-            `http://192.168.18.13:8000/api/v1/orders/user/${userId}`,
+            `https://shc.fayazk.com/api/v1/orders/user/${userId}`,
           );
           console.log('tetsting', response.data);
           if (
@@ -74,7 +74,7 @@ const OrdersScreen = ({navigation}) => {
       onPress={() => navigation.navigate('orderdetail', {order: item})}>
       <Image
         source={{
-          uri: `http://192.168.18.13:8000/uploads/${item.cartItems[0].product.photo}`,
+          uri: `https://shc.fayazk.com/uploads/${item.cartItems[0].product.photo}`,
         }}
         style={styles.productImage}
       />

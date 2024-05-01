@@ -2,7 +2,6 @@ import React from 'react';
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Or any other icon set
 
 export const SplashScreen = () => {
   const navigation = useNavigation();
@@ -30,17 +29,6 @@ export const SplashScreen = () => {
             <Text style={styles.buttonText}>Continue to app</Text>
           </LinearGradient>
         </TouchableOpacity>
-        {/* <TouchableOpacity
-          onPress={() => navigation.navigate('Register')}
-          style={styles.button}>
-          <LinearGradient
-            colors={['#E38A00', '#F49E1A']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={styles.gradient}>
-            <Text style={styles.buttonText}>Signup</Text>
-          </LinearGradient>
-        </TouchableOpacity> */}
       </View>
     </View>
   );

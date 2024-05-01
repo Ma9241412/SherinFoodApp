@@ -97,7 +97,7 @@ const RegisterScreen = ({navigation}) => {
       }
 
       const response = await fetch(
-        'http://192.168.18.13:8000/api/v1/auth/register',
+        'https://shc.fayazk.com/api/v1/auth/register',
         {
           method: 'POST',
           headers: {

@@ -60,7 +60,7 @@ export const OrderDetails = ({route}) => {
           <View key={index} style={styles.itemContainer}>
             <Image
               source={{
-                uri: `http://192.168.18.13:8000/uploads/${item.product.photo}`,
+                uri: `https://shc.fayazk.com/uploads/${item.product.photo}`,
               }}
               style={styles.productImage}
             />

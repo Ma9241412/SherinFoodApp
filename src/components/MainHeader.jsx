@@ -7,6 +7,7 @@ import {
   TextInput,
   Image,
   Alert,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,6 +24,7 @@ const MainHeader = ({
   const [userName, setUserName] = useState('Guest');
   const [profilePictureUri, setProfilePictureUri] = useState(null);
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [userDetailsExist, setUserDetailsExist] = useState(false);
 
   const fetchCartItems = async () => {
     try {
@@ -43,9 +45,6 @@ const MainHeader = ({
       fetchCartItems();
     }, []),
   );
-  const renderProfilePicture = profilePicture
-    ? {uri: profilePicture}
-    : require('../assets/dummy.png');
 
   const handleLogout = async () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
@@ -64,11 +63,13 @@ const MainHeader = ({
   const fetchUserDetails = async () => {
     try {
       const userDetails = await AsyncStorage.getItem('userDetails');
-      console.log(userDetails);
       if (userDetails !== null) {
         const {name, image} = JSON.parse(userDetails);
         setUserName(name);
         setProfilePictureUri(image);
+        setUserDetailsExist(true);
+      } else {
+        setUserDetailsExist(false);
       }
     } catch (error) {
       console.error('Failed to load the user details', error);
@@ -84,9 +85,16 @@ const MainHeader = ({
       fetchUserDetails();
     }, []),
   );
+
   const imageSource = profilePictureUri
-    ? {uri: `http://192.168.18.13:8000/uploads/${profilePictureUri}`}
+    ? {uri: `https://shc.fayazk.com/api/v1/uploads/${profilePictureUri}`}
     : require('../assets/avatar.png');
+
+  const handleProfilePress = () => {
+    if (!userDetailsExist) {
+      navigation.navigate('Login');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -95,7 +103,11 @@ const MainHeader = ({
           <Text style={styles.welcomeText}>Welcome!</Text>
           <Text style={styles.userName}>{userName}</Text>
         </View>
-        <Image source={imageSource} style={styles.profilePic} />
+        <TouchableOpacity
+          onPress={handleProfilePress}
+          style={{marginRight: 15}}>
+          <Image source={imageSource} style={styles.profilePic} />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.cartButton} onPress={onCartPress}>
           <Icon name="shopping-cart" size={23} color="white" />
           {cartItemCount > 0 && (
@@ -104,9 +116,11 @@ const MainHeader = ({
             </View>
           )}
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleLogout} style={styles.item}>
-          <Icon name="sign-out" size={20} color="white" style={styles.icon} />
-        </TouchableOpacity>
+        {userDetailsExist && (
+          <TouchableOpacity onPress={handleLogout} style={styles.item}>
+            <Icon name="sign-out" size={20} color="white" style={styles.icon} />
+          </TouchableOpacity>
+        )}
       </View>
       <View style={{paddingHorizontal: 10}}>
         <TextInput
@@ -173,7 +187,6 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 25,
-    marginRight: 15,
   },
   searchInput: {
     height: 45,

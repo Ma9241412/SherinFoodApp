@@ -32,7 +32,7 @@ export const HomeScreen = ({navigation}) => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        let endpoint = 'http://192.168.18.13:8000/api/v1/category/get-category';
+        let endpoint = 'https://shc.fayazk.com/api/v1/category/get-category';
 
         const response = await axios.get(endpoint);
         setCategories(response.data.category);

@@ -35,7 +35,7 @@ const InvoiceScreen = ({route, navigation}) => {
         );
 
         const response = await axios.post(
-          'http://192.168.18.13:8000/api/v1/orders/create-order',
+          'https://shc.fayazk.com/api/v1/orders/create-order',
           {
             cartItems: formattedCartItems,
             total: total,
@@ -77,7 +77,7 @@ const InvoiceScreen = ({route, navigation}) => {
 
   return (
     <>
-      <View style={{backgroundColor: 'white'}}>
+      <ScrollView style={{backgroundColor: 'white'}}>
         <View style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Sherin Huts</Text>
@@ -88,7 +88,7 @@ const InvoiceScreen = ({route, navigation}) => {
               <View key={index} style={styles.itemContainer}>
                 <Image
                   source={{
-                    uri: `http://192.168.18.13:8000/uploads/${item.photo}`,
+                    uri: `https://shc.fayazk.com/uploads/${item.photo}`,
                   }}
                   style={styles.Image}
                 />
@@ -109,7 +109,7 @@ const InvoiceScreen = ({route, navigation}) => {
           <View style={styles.fullWidthContainer}>
             <ImageBackground
               imageStyle={{borderRadius: 20}}
-              source={require('../assets/BG.jpg')}
+              source={require('../assets/BG.png')}
               style={styles.backgroundImage}>
               <ImageBackground
                 imageStyle={{
@@ -179,7 +179,7 @@ const InvoiceScreen = ({route, navigation}) => {
         <TouchableOpacity style={styles.button} onPress={handleOrderNow}>
           <Text style={styles.buttonText}>Order Now</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </>
   );
 };

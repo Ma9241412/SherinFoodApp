@@ -64,7 +64,7 @@ const UserDetailsScreen = ({route, navigation}) => {
 
     try {
       const response = await axios.post(
-        'http://192.168.18.13:8000/api/v1/orders/create-order',
+        ' https://shc.fayazk.com/api/v1/orders/create-order',
         orderDetails,
         {
           headers: {

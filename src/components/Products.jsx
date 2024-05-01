@@ -23,7 +23,7 @@ export const Products = ({selectedCategoryId, searchTerm}) => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        let endpoint = 'http://192.168.18.13:8000/api/v1/product/get-products';
+        let endpoint = 'https://shc.fayazk.com/api/v1/product/get-products';
 
         if (selectedCategoryId) {
           endpoint += `?categoryId=${selectedCategoryId}`;
@@ -38,9 +38,13 @@ export const Products = ({selectedCategoryId, searchTerm}) => {
           );
         }
 
+        // Check if products exist and filter only those with a non-null category
         if (filteredProducts.length > 0) {
           const updatedProducts = filteredProducts
-            .filter(product => product.category._id === selectedCategoryId)
+            .filter(
+              product =>
+                product.category && product.category._id === selectedCategoryId,
+            )
             .map(item => {
               const {category, ...rest} = item;
               return rest;
@@ -80,7 +84,9 @@ export const Products = ({selectedCategoryId, searchTerm}) => {
       <TouchableOpacity onPress={() => handlePress(item)}>
         <View style={styles.foodItemCard}>
           <Image
-            source={{uri: `http://192.168.18.13:8000/uploads/${item.photo}`}}
+            source={{
+              uri: `https://shc.fayazk.com/uploads/${item.photo}`,
+            }}
             style={styles.foodItemImage}
           />
 
