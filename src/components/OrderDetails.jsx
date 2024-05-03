@@ -10,7 +10,7 @@ import {
 
 export const OrderDetails = ({route}) => {
   const {order} = route.params;
-  console.log('quantitty', order.quantity);
+  console.log(order);
 
   return (
     <ScrollView style={styles.container}>
@@ -67,12 +67,42 @@ export const OrderDetails = ({route}) => {
             <View style={styles.itemDetails}>
               <Text style={styles.itemName}>{item.product.name}</Text>
               <Text style={styles.itemPrice}>
-                Price: Rs.{item.product.price}
+                {item.product.discountPrice < item.product.price
+                  ? `Price: Rs.${item.product.discountPrice} (Discounted from Rs.${item.product.price})`
+                  : `Price: Rs.${item.product.price}`}
               </Text>
               <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
             </View>
           </View>
         ))}
+        <View style={{paddingHorizontal: 70}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.totalPrice1}>GST: </Text>
+            <Text style={styles.totalPrice2}> {order.gst}.Rs </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.totalPrice1}>Discount: </Text>
+            <Text style={styles.totalPrice2}> {order.discount}.Rs </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.totalPrice1}>After: </Text>
+            <Text style={styles.totalPrice2}>{order.total}.Rs</Text>
+          </View>
+        </View>
       </View>
 
       <View style={styles.section2}>
@@ -181,6 +211,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#E63946',
+  },
+  totalPrice1: {
+    fontSize: 15,
+    fontFamily: 'Outfit-Medium',
+    color: '#E63946',
+  },
+  totalPrice2: {
+    fontSize: 12,
+    fontFamily: 'Outfit-Regular',
+    color: 'black',
   },
   status: {
     fontSize: 16,

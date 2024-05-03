@@ -19,7 +19,7 @@ export const SplashScreen = () => {
       <View style={styles.bottomContainer}>
         <Text style={styles.welcomeText}>Welcome to Sherin Huts</Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Home')}
+          onPress={() => navigation.navigate('maps')}
           style={styles.button}>
           <LinearGradient
             colors={['#E38A00', '#F49E1A']}

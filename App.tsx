@@ -15,6 +15,7 @@ import RegisterScreen from './src/screens/Register';
 import OrdersScreen from './src/components/UserOrders';
 import { SplashScreen } from './src/screens/Splash';
 import { OrderDetails } from './src/components/OrderDetails';
+import GoogleMaps from './src/components/GoogleMaps';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +41,8 @@ function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="splash" component={SplashScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="maps" component={GoogleMaps} options={{ headerShown: false }} />
+
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />

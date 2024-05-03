@@ -38,7 +38,6 @@ const InvoiceScreen = ({route, navigation}) => {
       .get(`${API_URL}/settings/get-gst`)
       .then(response => {
         const {data} = response.data;
-        console.log(data);
         setGst(data.gst);
       })
       .catch(error => {
@@ -52,7 +51,6 @@ const InvoiceScreen = ({route, navigation}) => {
       .get(`${API_URL}/settings/get-delivery`)
       .then(response => {
         const {data} = response.data;
-        console.log(data);
         setdelivery(data.deliveryCharges);
       })
       .catch(error => {
@@ -94,7 +92,9 @@ const InvoiceScreen = ({route, navigation}) => {
           `${API_URL}/orders/create-order`,
           {
             cartItems: formattedCartItems,
-            total: total,
+            total: totalWithGST,
+            gst: totalgst,
+            discount: discountedAmount,
             userDetails: JSON.parse(userDetails),
           },
           {
