@@ -52,12 +52,15 @@ const CartScreen = ({navigation}) => {
   }, [cartItems]);
 
   const calculateTotal = () => {
-    const newTotal = cartItems.reduce((accumulator, currentItem) => {
-      return accumulator + currentItem.price * currentItem.quantity;
-    }, 0);
+    let total = 0;
+    let totalDiscounted = 0;
 
-    console.log('newTotal', newTotal);
-    setTotal(newTotal);
+    cartItems.forEach(item => {
+      total += item.price * item.quantity;
+      totalDiscounted += (item.price - item.discountPrice) * item.quantity;
+    });
+
+    return {total, totalDiscounted};
   };
 
   useEffect(() => {
@@ -92,9 +95,15 @@ const CartScreen = ({navigation}) => {
   const proceedToCheckout = async () => {
     try {
       const userDetails = await AsyncStorage.getItem('userDetails');
+      const {total, totalDiscounted} = calculateTotal(); // Get both totals
 
       const navigateToInvoice = async () => {
-        navigation.navigate('invoice', {cartItems, total});
+        navigation.navigate('invoice', {
+          cartItems,
+          total,
+          totalDiscounted, // Send the discounted total as well
+          dis: total - totalDiscounted, // This might represent the total savings
+        });
         await AsyncStorage.removeItem('cartItems');
         setCartItems([]);
         setTotal(0);
@@ -140,7 +149,9 @@ const CartScreen = ({navigation}) => {
         />
         <View style={styles.itemInfo}>
           <Text style={styles.itemName}>{item.name}</Text>
-          <Text style={styles.itemPrice}>Rs.{item.price.toFixed(2)}</Text>
+          <Text style={styles.itemPrice}>
+            Discounted Rs.{item.discountPrice.toFixed(2)}
+          </Text>
 
           <View style={styles.quantityContainer}>
             <TouchableOpacity

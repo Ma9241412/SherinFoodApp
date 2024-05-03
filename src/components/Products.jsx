@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {API_URL} from '../Constants/Helper';
 export const Products = ({selectedCategoryId, searchTerm}) => {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
@@ -23,7 +24,7 @@ export const Products = ({selectedCategoryId, searchTerm}) => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        let endpoint = 'https://shc.fayazk.com/api/v1/product/get-products';
+        let endpoint = `${API_URL}/product/get-products`;
 
         if (selectedCategoryId) {
           endpoint += `?categoryId=${selectedCategoryId}`;

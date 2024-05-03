@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -11,10 +11,66 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import {API_URL} from '../Constants/Helper';
 
 const InvoiceScreen = ({route, navigation}) => {
-  const {cartItems, total} = route.params;
-  console.log('invoice', total);
+  const {cartItems, total, totalDiscounted, dis} = route.params;
+  const [discount, setDiscount] = useState(null);
+  const [gst, setGst] = useState(null);
+  const [delivery, setdelivery] = useState(null);
+
+  //OrderDiscount
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/settings/order-discount`)
+      .then(response => {
+        const {data} = response.data;
+        setDiscount(data.orderDiscount);
+      })
+      .catch(error => {
+        console.error('Error fetching discount:', error);
+      });
+  }, []);
+
+  //GST
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/settings/get-gst`)
+      .then(response => {
+        const {data} = response.data;
+        console.log(data);
+        setGst(data.gst);
+      })
+      .catch(error => {
+        console.error('Error fetching discount:', error);
+      });
+  }, []);
+
+  //DeliveryCharges
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/settings/get-delivery`)
+      .then(response => {
+        const {data} = response.data;
+        console.log(data);
+        setdelivery(data.deliveryCharges);
+      })
+      .catch(error => {
+        console.error('Error fetching discount:', error);
+      });
+  }, []);
+
+  function calculateDiscountedAmount(dis, discount) {
+    return (dis * discount) / 100;
+  }
+
+  const discountedAmount = calculateDiscountedAmount(dis, discount);
+
+  const totalAfterDiscount = dis - discountedAmount;
+  const totalgst = (dis * gst) / 100;
+
+  const totalWithGST = totalAfterDiscount + totalgst;
+  console.log(totalWithGST);
 
   const handleOrderNow = async () => {
     try {
@@ -30,12 +86,12 @@ const InvoiceScreen = ({route, navigation}) => {
           JSON.stringify({
             userDetails: JSON.parse(userDetails),
             cartItems: formattedCartItems,
-            total,
+            dis,
           }),
         );
 
         const response = await axios.post(
-          'https://shc.fayazk.com/api/v1/orders/create-order',
+          `${API_URL}/orders/create-order`,
           {
             cartItems: formattedCartItems,
             total: total,
@@ -95,11 +151,21 @@ const InvoiceScreen = ({route, navigation}) => {
                 <View
                   style={{
                     flexDirection: 'column',
-                    marginLeft: 10,
+                    marginLeft: 8,
                     marginTop: 10,
                   }}>
                   <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemQuantity}> Rs. {item.price}</Text>
+                  <Text
+                    style={[
+                      styles.itemQuantity,
+                      {textDecorationLine: 'line-through'},
+                    ]}>
+                    Actual Price. {item.price}
+                  </Text>
+                  <Text style={styles.itemQuantity}>
+                    {' '}
+                    Discounted Rs. {item.discountPrice}
+                  </Text>
                   <Text style={styles.itemQuantity}>Items {item.quantity}</Text>
                 </View>
               </View>
@@ -132,7 +198,26 @@ const InvoiceScreen = ({route, navigation}) => {
                       marginBottom: 20,
                     }}>
                     <Text style={styles.summaryText}>Sub Total</Text>
-                    <Text style={styles.summaryPrice}>Rs.{total}</Text>
+
+                    <Text style={styles.summaryPrice}>Rs.{dis}</Text>
+                  </View>
+                  <View>
+                    {discount !== null && (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: 20,
+                        }}>
+                        <Text style={styles.summaryText}>
+                          Discount ({discount}%)
+                        </Text>
+                        <Text style={styles.summaryPrice}>
+                          -Rs.{((dis * discount) / 100).toFixed(2)}
+                        </Text>
+                      </View>
+                    )}
                   </View>
                   <View
                     style={{
@@ -141,9 +226,9 @@ const InvoiceScreen = ({route, navigation}) => {
                       justifyContent: 'space-between',
                       marginBottom: 20,
                     }}>
-                    <Text style={styles.summaryText}>Discount (10%)</Text>
+                    <Text style={styles.summaryText}>Gst ({gst}%)</Text>
                     <Text style={styles.summaryPrice}>
-                      -Rs.{(total * 0.1).toFixed(2)}
+                      Rs.{((gst * dis) / 100).toFixed(2)}
                     </Text>
                   </View>
                   <View
@@ -154,7 +239,7 @@ const InvoiceScreen = ({route, navigation}) => {
                       marginBottom: 20,
                     }}>
                     <Text style={styles.summaryText}>Delievery</Text>
-                    <Text style={styles.summaryPrice}>Rs.0</Text>
+                    <Text style={styles.summaryPrice}>Rs.{delivery} /km</Text>
                   </View>
                   <View style={styles.dottedLine} />
                   <View
@@ -164,11 +249,9 @@ const InvoiceScreen = ({route, navigation}) => {
                       justifyContent: 'space-between',
                       marginTop: 10,
                     }}>
-                    <Text style={styles.totalLabel}>
-                      Total after 10% Discount
-                    </Text>
+                    <Text style={styles.totalLabel}>Total Amount</Text>
                     <Text style={styles.totalPrice}>
-                      Rs.{(total - total * 0.1).toFixed(2)}
+                      Rs.{totalWithGST.toFixed(2)}
                     </Text>
                   </View>
                 </View>

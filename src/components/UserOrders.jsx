@@ -11,6 +11,7 @@ import {
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import {API_URL} from '../Constants/Helper';
 
 const OrdersScreen = ({navigation}) => {
   const [orders, setOrders] = useState([]);
@@ -41,9 +42,7 @@ const OrdersScreen = ({navigation}) => {
             return;
           }
 
-          const response = await axios.get(
-            `https://shc.fayazk.com/api/v1/orders/user/${userId}`,
-          );
+          const response = await axios.get(`${API_URL}/orders/user/${userId}`);
           console.log('tetsting', response.data);
           if (
             response.data &&

@@ -13,6 +13,7 @@ import axios from 'axios';
 import {Products} from '../components/Products';
 import MainHeader from '../components/MainHeader';
 import Sidebar from '../components/SideBar';
+import {API_URL} from '../Constants/Helper';
 
 export const HomeScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,7 @@ export const HomeScreen = ({navigation}) => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        let endpoint = 'https://shc.fayazk.com/api/v1/category/get-category';
+        let endpoint = `${API_URL}/category/get-category`;
 
         const response = await axios.get(endpoint);
         setCategories(response.data.category);

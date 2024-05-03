@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Make sure you have installed react-native-vector-icons
+import {API_URL} from '../Constants/Helper';
 
 const RegisterScreen = ({navigation}) => {
   const [name, setName] = useState('');
@@ -96,16 +97,13 @@ const RegisterScreen = ({navigation}) => {
         });
       }
 
-      const response = await fetch(
-        'https://shc.fayazk.com/api/v1/auth/register',
-        {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-          },
-          body: formData,
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
         },
-      );
+        body: formData,
+      });
 
       const data = await response.json();
 

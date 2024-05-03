@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
+import {API_URL} from '../Constants/Helper';
 
 const UserDetailsScreen = ({route, navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +65,7 @@ const UserDetailsScreen = ({route, navigation}) => {
 
     try {
       const response = await axios.post(
-        ' https://shc.fayazk.com/api/v1/orders/create-order',
+        `${API_URL}/orders/create-order`,
         orderDetails,
         {
           headers: {

@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {useAuth} from '../AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_URL} from '../Constants/Helper';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -26,7 +27,7 @@ const LoginScreen = ({navigation}) => {
 
     try {
       const response = await axios.post(
-        'https://shc.fayazk.com/api/v1/auth/login',
+        `${API_URL}/auth/login`,
         {email, password},
         {headers: {'Content-Type': 'application/json'}},
       );

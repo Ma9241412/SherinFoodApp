@@ -76,7 +76,7 @@ const ProductDetailsScreen = ({route, navigation}) => {
     }
   };
 
-  const totalPrice = (item.price * quantity).toFixed(2);
+  const totalPrice = (item.discountPrice * quantity).toFixed(2);
 
   return (
     <View style={styles.container}>
@@ -100,7 +100,7 @@ const ProductDetailsScreen = ({route, navigation}) => {
           <View style={{flexDirection: 'column', marginLeft: 10}}>
             <Text style={styles.title1}>{item.name}</Text>
 
-            <Text style={styles.title}>Price: Rs.{totalPrice}</Text>
+            <Text style={styles.title}>Discounted Price: Rs.{totalPrice}</Text>
             <View style={styles.footer}>
               <View
                 style={{
