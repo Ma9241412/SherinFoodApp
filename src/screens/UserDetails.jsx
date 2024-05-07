@@ -13,15 +13,24 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import {API_URL} from '../Constants/Helper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserDetailsScreen = ({route, navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const {cartItems, total} = route.params;
+  const {
+    cartItems,
+    total,
+    deliveryaddress,
+    gst,
+    discount,
+    deliverycharges,
+    status,
+  } = route.params;
   const [userDetails, setUserDetails] = useState({
     name: '',
-    email: '',
+    // email: '',
     phone: '',
-    address: '',
+    // address: '',
   });
 
   const handleInputChange = (name, value) => {
@@ -37,30 +46,33 @@ const UserDetailsScreen = ({route, navigation}) => {
 
   // Create Order
   const handleSubmit = async () => {
-    const allFieldsFilled = Object.values(userDetails).every(
-      field => field.trim().length > 0,
-    );
-
-    if (!allFieldsFilled) {
-      Alert.alert('Error', 'Please fill in all fields.');
-      return;
-    }
-
     setIsLoading(true);
+
+    // Format cart items with necessary details
     const formattedCartItems = cartItems.map(item => ({
       ...item,
       product: item._id,
+      name: item.name.toUpperCase(),
+      photo: `https://shc.fayazk.com/uploads/${item.photo}`,
+      price: item.price,
     }));
+
+    // Trim user details to avoid leading/trailing whitespace issues
     const trimmedDetails = {
       name: userDetails.name.trim(),
-      email: userDetails.email.trim(),
       phone: userDetails.phone.trim(),
-      address: userDetails.address.trim(),
     };
+
+    // Compile the complete order details
     const orderDetails = {
       userDetails: trimmedDetails,
       cartItems: formattedCartItems,
       total,
+      deliveryaddress,
+      status,
+      gst,
+      discount,
+      deliverycharges,
     };
 
     try {
@@ -73,9 +85,32 @@ const UserDetailsScreen = ({route, navigation}) => {
           },
         },
       );
-      console.log('products', response.data);
+
+      console.log('Order creation:', response.data);
       setIsLoading(false);
+
       if (response.status === 200 || response.status === 201) {
+        const guestOrder = {
+          id: response.data.orderId,
+          userDetails: trimmedDetails,
+          cartItems: formattedCartItems.map(item => ({
+            ...item,
+            product: {
+              name: item.name,
+              photo: `https://shc.fayazk.com/uploads/${item.photo}`,
+              price: item.price,
+            },
+          })),
+          total,
+          status,
+          gst,
+          discount,
+          deliveryaddress,
+          deliverycharges,
+        };
+
+        await AsyncStorage.setItem('guestOrder', JSON.stringify(guestOrder));
+
         navigation.navigate('success');
       } else {
         Alert.alert('Error', 'Something went wrong with your order.');
@@ -109,14 +144,14 @@ const UserDetailsScreen = ({route, navigation}) => {
               onBlur={() => handleInputBlur('name')}
               value={userDetails.name}
             />
-            <TextInput
+            {/* <TextInput
               style={styles.input}
               placeholder="Email Address"
               keyboardType="email-address"
               onChangeText={text => handleInputChange('email', text)}
               onBlur={() => handleInputBlur('email')}
               value={userDetails.email}
-            />
+            /> */}
             <TextInput
               style={styles.input}
               placeholder="Phone Number"
@@ -125,14 +160,14 @@ const UserDetailsScreen = ({route, navigation}) => {
               onBlur={() => handleInputBlur('phone')}
               value={userDetails.phone}
             />
-            <TextInput
+            {/* <TextInput
               style={styles.input}
               placeholder="Delivery Address"
               onChangeText={text => handleInputChange('address', text)}
               onBlur={() => handleInputBlur('address')}
               value={userDetails.address}
               multiline
-            />
+            /> */}
           </View>
         </ScrollView>
       )}

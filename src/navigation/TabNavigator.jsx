@@ -1,6 +1,6 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/FontAwesome5'; // Make sure to use FontAwesome5 to access the latest icons
+import Icon from 'react-native-vector-icons/FontAwesome5'; // Ensure FontAwesome5 is used
 import OrdersScreen from '../components/UserOrders';
 import CartScreen from '../screens/Cart';
 import {HomeScreen} from '../screens/Home';
@@ -13,28 +13,47 @@ const TabNavigator = () => (
     screenOptions={({route}) => ({
       tabBarIcon: ({focused, color, size}) => {
         let iconName;
-
-        if (route.name === 'Home') {
-          iconName = 'home';
-        } else if (route.name === 'orders') {
-          iconName = 'history';
-        } else if (route.name === 'Cart') {
-          iconName = 'shopping-cart';
+        // Set the icon based on the route name
+        switch (route.name) {
+          case 'Home':
+            iconName = 'home';
+            break;
+          case 'Orders':
+            iconName = 'clipboard-list';
+            break;
+          case 'Cart':
+            iconName = 'shopping-cart';
+            break;
+          default:
+            iconName = 'circle';
+            break;
         }
-
+        // Return the icon component
         return (
           <Icon name={iconName} size={size} color={color} solid={focused} />
         );
       },
-      tabBarActiveTintColor: '#E4A112',
-      tabBarInactiveTintColor: '#9098B1',
-      tabBarShowLabel: false,
+      tabBarActiveTintColor: '#E4A112', // Set the active icon color
+      tabBarInactiveTintColor: '#9098B1', // Set the inactive icon color
+      tabBarShowLabel: true, // Ensure labels are shown
       headerShown: false,
-      tabBarStyle: {backgroundColor: '#FFFFFF'},
+      tabBarStyle: {backgroundColor: '#FFFFFF'}, // Set the tab bar background color
     })}>
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="orders" component={OrdersScreen} />
-    <Tab.Screen name="Cart" component={CartScreen} />
+    <Tab.Screen
+      name="Home"
+      component={HomeScreen}
+      options={{tabBarLabel: 'Home'}}
+    />
+    <Tab.Screen
+      name="orders"
+      component={OrdersScreen}
+      options={{tabBarLabel: 'Orders'}}
+    />
+    <Tab.Screen
+      name="Cart"
+      component={CartScreen}
+      options={{tabBarLabel: 'Cart'}}
+    />
   </Tab.Navigator>
 );
 

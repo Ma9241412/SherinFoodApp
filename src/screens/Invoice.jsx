@@ -18,6 +18,8 @@ const InvoiceScreen = ({route, navigation}) => {
   const [discount, setDiscount] = useState(null);
   const [gst, setGst] = useState(null);
   const [delivery, setdelivery] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState({});
+  const [distance, setDistance] = useState(null);
 
   //OrderDiscount
   useEffect(() => {
@@ -62,14 +64,6 @@ const InvoiceScreen = ({route, navigation}) => {
     return (dis * discount) / 100;
   }
 
-  const discountedAmount = calculateDiscountedAmount(dis, discount);
-
-  const totalAfterDiscount = dis - discountedAmount;
-  const totalgst = (dis * gst) / 100;
-
-  const totalWithGST = totalAfterDiscount + totalgst;
-  console.log(totalWithGST);
-
   const handleOrderNow = async () => {
     try {
       const userDetails = await AsyncStorage.getItem('userDetails');
@@ -92,8 +86,10 @@ const InvoiceScreen = ({route, navigation}) => {
           `${API_URL}/orders/create-order`,
           {
             cartItems: formattedCartItems,
-            total: totalWithGST,
+            total: totalRounded,
             gst: totalgst,
+            deliveryaddress: selectedAddress,
+            deliverycharges: DeliveryCharges,
             discount: discountedAmount,
             userDetails: JSON.parse(userDetails),
           },
@@ -114,7 +110,11 @@ const InvoiceScreen = ({route, navigation}) => {
       } else {
         navigation.navigate('userdetails', {
           cartItems: cartItems,
-          total: total,
+          total: totalRounded,
+          deliveryaddress: selectedAddress,
+          gst,
+          discount,
+          deliverycharges: DeliveryCharges,
         });
       }
     } catch (error) {
@@ -130,7 +130,34 @@ const InvoiceScreen = ({route, navigation}) => {
       }
     }
   };
+  useEffect(() => {
+    const getSelectedAddress = async () => {
+      try {
+        const jsonData = await AsyncStorage.getItem('selectedAddress');
+        if (jsonData) {
+          const data = JSON.parse(jsonData);
+          setSelectedAddress(data.address);
+          setDistance(data.distance);
+        }
+      } catch (error) {
+        console.error(
+          'Error fetching selected address from AsyncStorage:',
+          error,
+        );
+      }
+    };
 
+    getSelectedAddress();
+  }, []);
+
+  const discountedAmount = calculateDiscountedAmount(dis, discount);
+  const DeliveryCharges = delivery * distance;
+  const totalAfterDiscount = dis - discountedAmount;
+  const totalgst = (dis * gst) / 100;
+
+  const totalWithGST = totalAfterDiscount + totalgst + DeliveryCharges;
+  const totalRounded = totalWithGST.toFixed(0);
+  console.log(totalWithGST);
   return (
     <>
       <ScrollView style={{backgroundColor: 'white'}}>
@@ -239,7 +266,9 @@ const InvoiceScreen = ({route, navigation}) => {
                       marginBottom: 20,
                     }}>
                     <Text style={styles.summaryText}>Delievery</Text>
-                    <Text style={styles.summaryPrice}>Rs.{delivery} /km</Text>
+                    <Text style={styles.summaryPrice}>
+                      Rs. {DeliveryCharges.toFixed(0)}
+                    </Text>
                   </View>
                   <View style={styles.dottedLine} />
                   <View
@@ -250,9 +279,7 @@ const InvoiceScreen = ({route, navigation}) => {
                       marginTop: 10,
                     }}>
                     <Text style={styles.totalLabel}>Total Amount</Text>
-                    <Text style={styles.totalPrice}>
-                      Rs.{totalWithGST.toFixed(2)}
-                    </Text>
+                    <Text style={styles.totalPrice}>Rs.{totalRounded}</Text>
                   </View>
                 </View>
               </ImageBackground>

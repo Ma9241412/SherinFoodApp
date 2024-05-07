@@ -10,7 +10,8 @@ import {
 
 export const OrderDetails = ({route}) => {
   const {order} = route.params;
-  console.log(order);
+
+  console.log('ordeDetails', order.cartItems);
 
   return (
     <ScrollView style={styles.container}>
@@ -102,6 +103,15 @@ export const OrderDetails = ({route}) => {
             <Text style={styles.totalPrice1}>After: </Text>
             <Text style={styles.totalPrice2}>{order.total}.Rs</Text>
           </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.totalPrice1}>Delivery Address: </Text>
+            <Text style={styles.totalPrice2}> {order.deliveryaddress}</Text>
+          </View>
         </View>
       </View>
 
@@ -112,7 +122,7 @@ export const OrderDetails = ({route}) => {
 
       <View style={styles.section3}>
         <Text style={styles.sectionTitle2}>Order Status</Text>
-        <Text style={styles.status}>{order.status}</Text>
+        <Text style={styles.status}>{order.status || 'Pending'}</Text>
       </View>
     </ScrollView>
   );

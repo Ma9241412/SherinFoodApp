@@ -25,44 +25,63 @@ const OrdersScreen = ({navigation}) => {
     delivered: '#04A200',
   };
 
-  const getStatusColor = status =>
-    statusColors[status.toLowerCase()] || '#808080';
+  const getStatusColor = status => {
+    const effectiveStatus = status || 'pending';
+    return statusColors[effectiveStatus.toLowerCase()] || '#808080';
+  };
 
   useFocusEffect(
     React.useCallback(() => {
       const fetchOrders = async () => {
         setLoading(true);
+        setError('');
+
         try {
           const userDetailsString = await AsyncStorage.getItem('userDetails');
-          let userDetails = JSON.parse(userDetailsString);
+          const userDetails = JSON.parse(userDetailsString);
 
-          const userId = userDetails?.userId;
-          if (!userId) {
-            setError('Orders not found');
-            return;
-          }
-
-          const response = await axios.get(`${API_URL}/orders/user/${userId}`);
-          console.log('tetsting', response.data);
-          if (
-            response.data &&
-            response.data.data &&
-            response.data.data.length > 0
-          ) {
-            setOrders(response.data.data);
+          if (userDetails && userDetails.userId) {
+            try {
+              const response = await axios.get(
+                `${API_URL}/orders/user/${userDetails.userId}`,
+              );
+              if (
+                response.data &&
+                response.data.data &&
+                response.data.data.length > 0
+              ) {
+                setOrders(response.data.data);
+              } else {
+                throw new Error('No user orders found');
+              }
+            } catch (error) {
+              console.error('Failed to fetch user orders:', error);
+              throw new Error('Fetching user orders failed');
+            }
           } else {
-            setError('No orders placed yet');
+            throw new Error('No user details found');
           }
-        } catch (err) {
-          setError('Failed to fetch orders');
-          console.error('Failed to fetch orders', err);
-        } finally {
-          setLoading(false);
+        } catch (error) {
+          console.log(error.message);
+          try {
+            const guestOrderString = await AsyncStorage.getItem('guestOrder');
+            console.log('guestorder', guestOrderString);
+            const guestOrder = JSON.parse(guestOrderString);
+            if (guestOrder) {
+              setOrders([guestOrder]);
+            } else {
+              setError('No orders found');
+            }
+          } catch (err) {
+            setError('Failed to fetch guest orders');
+            console.error('Failed to fetch guest orders:', err);
+          }
         }
+
+        setLoading(false);
       };
 
       fetchOrders();
-
       return () => {};
     }, []),
   );
@@ -71,12 +90,14 @@ const OrdersScreen = ({navigation}) => {
     <TouchableOpacity
       style={styles.orderCard}
       onPress={() => navigation.navigate('orderdetail', {order: item})}>
-      <Image
+      {/* <Image
         source={{
-          uri: `https://shc.fayazk.com/uploads/${item.cartItems[0].product.photo}`,
+          uri: item.cartItems[0].product
+            ? `https://shc.fayazk.com/uploads/${item.cartItems[0].product.photo}`
+            : item.cartItems[0].photo,
         }}
         style={styles.productImage}
-      />
+      /> */}
       <View style={styles.orderDetails}>
         <Text style={styles.productName}>
           {item.cartItems.map(cartItem => cartItem.product.name).join(', ')}
@@ -95,7 +116,7 @@ const OrdersScreen = ({navigation}) => {
               styles.statusBG,
               {backgroundColor: getStatusColor(item.status)},
             ]}>
-            <Text style={styles.status}>{item.status}</Text>
+            <Text style={styles.status}>{item.status || 'Pending'}</Text>
           </View>
         </View>
       </View>
@@ -138,13 +159,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#F6F6F6',
     margin: 8,
-    borderTopLeftRadius: 50,
-    borderBottomLeftRadius: 50,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
     borderColor: '#CECECE69',
     borderWidth: 2,
     borderTopRightRadius: 10,
     borderBottomRightRadius: 20,
-    margin: 15,
+    paddingHorizontal: 0,
+    paddingVertical: 10,
   },
   productImage: {
     width: 100,
@@ -162,12 +184,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginBottom: 4,
     color: '#2B2B2B',
+    paddingHorizontal: 10,
   },
   productCount: {
     fontSize: 15,
     color: '#787F93',
     marginBottom: 8,
     fontFamily: 'Outfit-Medium',
+    paddingHorizontal: 10,
   },
   tag: {
     borderRadius: 5,
@@ -187,6 +211,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'black',
     fontFamily: 'Outfit-Medium',
+    paddingHorizontal: 10,
   },
   status: {
     fontSize: 12,
@@ -197,10 +222,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 5,
     bottom: 0,
-    right: 0,
+    right: 1,
     top: 10,
     borderBottomRightRadius: 15,
-    borderTopLeftRadius: 15,
+    // borderTopLeftRadius: 15,
   },
   status: {
     fontSize: 12,
