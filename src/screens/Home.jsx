@@ -8,6 +8,7 @@ import {
   ScrollView,
   Image,
   ActivityIndicator,
+  BackHandler,
 } from 'react-native';
 import axios from 'axios';
 import {Products} from '../components/Products';
@@ -22,6 +23,18 @@ export const HomeScreen = ({navigation}) => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
+  useEffect(() => {
+    const backAction = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
   };

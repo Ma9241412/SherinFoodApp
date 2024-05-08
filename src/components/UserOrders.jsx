@@ -90,16 +90,12 @@ const OrdersScreen = ({navigation}) => {
     <TouchableOpacity
       style={styles.orderCard}
       onPress={() => navigation.navigate('orderdetail', {order: item})}>
-      {/* <Image
-        source={{
-          uri: item.cartItems[0].product
-            ? `https://shc.fayazk.com/uploads/${item.cartItems[0].product.photo}`
-            : item.cartItems[0].photo,
-        }}
-        style={styles.productImage}
-      /> */}
       <View style={styles.orderDetails}>
-        <Text style={styles.productName}>
+        {item._id && (
+          <Text style={styles.productName}>{'#SH' + item._id.slice(0, 7)}</Text>
+        )}
+
+        <Text style={styles.productCount}>
           {item.cartItems.map(cartItem => cartItem.product.name).join(', ')}
         </Text>
         <Text style={styles.productCount}>
@@ -189,7 +185,7 @@ const styles = StyleSheet.create({
   productCount: {
     fontSize: 15,
     color: '#787F93',
-    marginBottom: 8,
+    marginBottom: 6,
     fontFamily: 'Outfit-Medium',
     paddingHorizontal: 10,
   },

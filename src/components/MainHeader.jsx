@@ -25,6 +25,31 @@ const MainHeader = ({
   const [profilePictureUri, setProfilePictureUri] = useState(null);
   const [cartItemCount, setCartItemCount] = useState(0);
   const [userDetailsExist, setUserDetailsExist] = useState(false);
+  const [address, setAddress] = useState('');
+
+  const fetchAddress = async () => {
+    try {
+      const savedAddress = await AsyncStorage.getItem('selectedAddress');
+      if (savedAddress) {
+        setAddress(JSON.parse(savedAddress).address);
+      }
+    } catch (error) {
+      console.error('Failed to load address', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAddress();
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchAddress();
+    }, []),
+  );
+  const handleAddressPress = () => {
+    navigation.navigate('maps');
+  };
 
   const fetchCartItems = async () => {
     try {
@@ -98,18 +123,32 @@ const MainHeader = ({
 
   return (
     <View style={styles.container}>
+      <View style={styles.addressContainer}>
+        {address && (
+          <TouchableOpacity
+            onPress={handleAddressPress}
+            style={styles.addressButton}>
+            <Icon
+              name="map-marker"
+              size={20}
+              color="#E4A112"
+              style={styles.addressIcon}
+            />
+            <Text style={styles.addressText}>{address}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
       <View style={styles.header}>
         <View style={styles.welcomeContainer}>
           <Text style={styles.welcomeText}>Welcome!</Text>
           <Text style={styles.userName}>{userName}</Text>
         </View>
-        <TouchableOpacity
-          onPress={handleProfilePress}
-          style={{marginRight: 15}}>
+        <TouchableOpacity onPress={handleProfilePress} style={{marginRight: 5}}>
           <Image source={imageSource} style={styles.profilePic} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.cartButton} onPress={onCartPress}>
-          <Icon name="shopping-cart" size={23} color="white" />
+          <Icon name="shopping-cart" size={20} color="white" />
           {cartItemCount > 0 && (
             <View style={styles.cartBadge}>
               <Text style={styles.cartBadgeText}>{cartItemCount}</Text>
@@ -117,8 +156,8 @@ const MainHeader = ({
           )}
         </TouchableOpacity>
         {userDetailsExist && (
-          <TouchableOpacity onPress={handleLogout} style={styles.item}>
-            <Icon name="sign-out" size={20} color="white" style={styles.icon} />
+          <TouchableOpacity onPress={handleLogout} style={styles.cartButton}>
+            <Icon name="sign-out" size={20} color="white" />
           </TouchableOpacity>
         )}
       </View>
@@ -140,6 +179,35 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingBottom: 10,
   },
+  addressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+
+  addressButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  addressIcon: {
+    marginRight: 5,
+  },
+
+  addressText: {
+    fontSize: 13,
+    color: '#E4A112',
+    fontFamily: 'Outfit-Medium',
+  },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
@@ -161,11 +229,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Outfit-Medium',
   },
   cartButton: {
-    marginRight: 10,
-    position: 'relative',
+    marginRight: 8,
     backgroundColor: '#E4A112',
-    padding: 7,
-    borderRadius: 28,
+    padding: 5,
+    borderRadius: 15,
   },
   cartBadge: {
     position: 'absolute',
@@ -184,8 +251,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   profilePic: {
-    width: 38,
-    height: 38,
+    width: 35,
+    height: 35,
     borderRadius: 25,
   },
   searchInput: {
@@ -202,12 +269,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#E4A112',
-    padding: 9,
-    borderRadius: 25,
   },
   icon: {
-    width: 20,
-    height: 20,
+    width: 12,
+    height: 12,
   },
 });
 

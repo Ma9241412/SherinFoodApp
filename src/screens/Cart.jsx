@@ -95,18 +95,20 @@ const CartScreen = ({navigation}) => {
   const proceedToCheckout = async () => {
     try {
       const userDetails = await AsyncStorage.getItem('userDetails');
-      const {total, totalDiscounted} = calculateTotal(); // Get both totals
+      const {total, totalDiscounted} = calculateTotal();
 
       const navigateToInvoice = async () => {
         navigation.navigate('invoice', {
+          setCartItems,
+          setTotal,
           cartItems,
           total,
           totalDiscounted, // Send the discounted total as well
           dis: total - totalDiscounted, // This might represent the total savings
         });
-        await AsyncStorage.removeItem('cartItems');
-        setCartItems([]);
-        setTotal(0);
+        // await AsyncStorage.removeItem('cartItems');
+        // setCartItems([]);
+        // setTotal(0);
         ToastAndroid.show('Continuing as guest', ToastAndroid.SHORT);
       };
 

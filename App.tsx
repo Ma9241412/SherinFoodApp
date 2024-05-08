@@ -48,7 +48,7 @@ function App() {
           <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
           <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: true }} />
           <Stack.Screen name="Details" component={DetailsScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="invoice" component={InvoiceScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="invoice" component={InvoiceScreen} options={{ headerShown: true }} />
           <Stack.Screen name="userdetails" component={UserDetailsScreen} options={{ headerShown: false }} />
           <Stack.Screen name="success" component={OrderConfirmationScreen} options={{ headerShown: false }} />
           <Stack.Screen name="orders" component={OrdersScreen} options={{ headerShown: true }} />

@@ -10,6 +10,7 @@ import {
 import MapView, {Marker, Polyline} from 'react-native-maps';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {mapDarkStyle} from './mapstyle';
 
 const originRegion = {
   latitude: 34.742493070007484,
@@ -65,8 +66,8 @@ const GoogleMaps = ({navigation}) => {
     const latitude = (point1.latitude + point2.latitude) / 2;
     const longitude = (point1.longitude + point2.longitude) / 2;
 
-    const latitudeDelta = Math.abs(point1.latitude - point2.latitude) * 2; // multiply by 2 for some padding
-    const longitudeDelta = Math.abs(point1.longitude - point2.longitude) * 2; // multiply by 2 for some padding
+    const latitudeDelta = Math.abs(point1.latitude - point2.latitude) * 2;
+    const longitudeDelta = Math.abs(point1.longitude - point2.longitude) * 2;
 
     return {
       latitude,
@@ -92,14 +93,14 @@ const GoogleMaps = ({navigation}) => {
       });
 
       setRegion(newRegion);
-      setSearchAddress(suggestion.description); // Set search address before calculating distance
-      setAddressSelected(true); // Mark address as selected
-      setSuggestions([]); // Clear suggestions
+      setSearchAddress(suggestion.description);
+      setAddressSelected(true);
+      setSuggestions([]);
       setPathCoordinates([
         {latitude: originRegion.latitude, longitude: originRegion.longitude},
         {latitude: location.lat, longitude: location.lng},
       ]);
-      calculateAndStoreDistance(newRegion); // Call this after updating the region and address
+      calculateAndStoreDistance(newRegion);
     } catch (error) {
       console.error('Error fetching place details', error);
     }
@@ -149,7 +150,8 @@ const GoogleMaps = ({navigation}) => {
       <MapView
         style={styles.map}
         region={region}
-        onRegionChangeComplete={setRegion}>
+        onRegionChangeComplete={setRegion}
+        customMapStyle={mapDarkStyle}>
         <Marker
           coordinate={markerPosition}
           onDragEnd={onMarkerDragEnd}

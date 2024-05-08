@@ -9,6 +9,7 @@ import {
   ToastAndroid,
   ActivityIndicator,
   Alert,
+  BackHandler,
 } from 'react-native';
 import {useAuth} from '../AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,6 +22,19 @@ const LoginScreen = ({navigation}) => {
   const {setIsAuthenticated} = useAuth();
 
   const HTTP_STATUS_OK = 200;
+
+  useEffect(() => {
+    const backAction = () => {
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const handleLoginPress = async () => {
     setIsLoading(true);

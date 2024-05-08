@@ -25,6 +25,8 @@ const UserDetailsScreen = ({route, navigation}) => {
     discount,
     deliverycharges,
     status,
+    setCartItems,
+    setTotal,
   } = route.params;
   const [userDetails, setUserDetails] = useState({
     name: '',
@@ -56,7 +58,9 @@ const UserDetailsScreen = ({route, navigation}) => {
       photo: `https://shc.fayazk.com/uploads/${item.photo}`,
       price: item.price,
     }));
-
+    await AsyncStorage.removeItem('cartItems');
+    setCartItems([]);
+    setTotal(0);
     // Trim user details to avoid leading/trailing whitespace issues
     const trimmedDetails = {
       name: userDetails.name.trim(),

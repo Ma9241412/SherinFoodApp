@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const OrderConfirmationScreen = ({navigation}) => {
   const handlePressBack = () => {
-    navigation.navigate('Home');
+    navigation.navigate('home');
   };
   return (
     <View style={styles.container}>

@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Make sure you have installed react-native-vector-icons
@@ -22,6 +23,7 @@ const RegisterScreen = ({navigation}) => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const selectImage = () => {
     const options = {
@@ -80,7 +82,7 @@ const RegisterScreen = ({navigation}) => {
       alert('Please enter a valid phone number with 10 digits.');
       return;
     }
-
+    setIsLoading(true);
     try {
       const formData = new FormData();
       formData.append('name', name.trim());
@@ -120,6 +122,9 @@ const RegisterScreen = ({navigation}) => {
     } catch (error) {
       console.error('Registration error:', error);
       ToastAndroid.show('Registration error', ToastAndroid.LONG);
+    } finally {
+      setIsLoading(false);
+      navigation.navigate('Login');
     }
   };
 
@@ -180,8 +185,15 @@ const RegisterScreen = ({navigation}) => {
           multiline
         />
 
-        <TouchableOpacity onPress={handleRegister} style={styles.button}>
-          <Text style={styles.buttonText}>Sign up</Text>
+        <TouchableOpacity
+          onPress={handleRegister}
+          style={[styles.button, isLoading && styles.disabledButton]}
+          disabled={isLoading}>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text style={styles.buttonText}>Sign up</Text>
+          )}
         </TouchableOpacity>
       </KeyboardAvoidingView>
       <TouchableOpacity
@@ -231,6 +243,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
+    opacity: 1,
+  },
+  disabledButton: {
+    opacity: 0.5, // Reduce opacity when the button is disabled
   },
   buttonText: {
     color: 'white',

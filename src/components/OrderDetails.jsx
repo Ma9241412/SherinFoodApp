@@ -1,15 +1,52 @@
-import React from 'react';
-import {
-  ScrollView,
-  Text,
-  View,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {ScrollView, Text, View, Image, StyleSheet} from 'react-native';
+import {API_URL} from '../Constants/Helper';
+import axios from 'axios';
 
 export const OrderDetails = ({route}) => {
+  const [discount, setDiscount] = useState(null);
+  const [gst, setGst] = useState(null);
+  const [delivery, setdelivery] = useState(null);
   const {order} = route.params;
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/settings/order-discount`)
+      .then(response => {
+        const {data} = response.data;
+
+        setDiscount(data.orderDiscount);
+      })
+      .catch(error => {
+        console.error('Error fetching discount:', error);
+      });
+  }, []);
+
+  //GST
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/settings/get-gst`)
+      .then(response => {
+        const {data} = response.data;
+        setGst(data.gst);
+      })
+      .catch(error => {
+        console.error('Error fetching discount:', error);
+      });
+  }, []);
+
+  //DeliveryCharges
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/settings/get-delivery`)
+      .then(response => {
+        const {data} = response.data;
+        setdelivery(data.deliveryCharges);
+      })
+      .catch(error => {
+        console.error('Error fetching discount:', error);
+      });
+  }, []);
 
   console.log('ordeDetails', order.cartItems);
 
@@ -33,7 +70,9 @@ export const OrderDetails = ({route}) => {
             justifyContent: 'space-between',
           }}>
           <Text style={styles.detail}>Email: </Text>
-          <Text style={styles.detail2}>{order.userDetails.email}</Text>
+          <Text style={styles.detail2}>
+            {order.userDetails.email || 'None'}
+          </Text>
         </View>
         <View
           style={{
@@ -44,18 +83,9 @@ export const OrderDetails = ({route}) => {
           <Text style={styles.detail}>Phone: </Text>
           <Text style={styles.detail2}>{order.userDetails.phone}</Text>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-          <Text style={styles.detail}>Address:</Text>
-          <Text style={styles.detail2}>{order.userDetails.address}</Text>
-        </View>
       </View>
 
-      <View style={styles.section}>
+      <ScrollView style={styles.section}>
         <Text style={styles.sectionTitle}>Order Summary</Text>
         {order.cartItems.map((item, index) => (
           <View key={index} style={styles.itemContainer}>
@@ -82,7 +112,7 @@ export const OrderDetails = ({route}) => {
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-            <Text style={styles.totalPrice1}>GST: </Text>
+            <Text style={styles.totalPrice1}>GST ({gst} %): </Text>
             <Text style={styles.totalPrice2}> {order.gst}.Rs </Text>
           </View>
 
@@ -91,10 +121,21 @@ export const OrderDetails = ({route}) => {
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-            <Text style={styles.totalPrice1}>Discount: </Text>
+            <Text style={styles.totalPrice1}>Discount ({discount} %):</Text>
             <Text style={styles.totalPrice2}> {order.discount}.Rs </Text>
           </View>
-
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.totalPrice1}>
+              DeliveryCharges ({delivery} /km):
+            </Text>
+            <Text style={styles.totalPrice2}>
+              {Math.round(order.deliverycharges)}.Rs
+            </Text>
+          </View>
           <View
             style={{
               flexDirection: 'row',
@@ -113,7 +154,7 @@ export const OrderDetails = ({route}) => {
             <Text style={styles.totalPrice2}> {order.deliveryaddress}</Text>
           </View>
         </View>
-      </View>
+      </ScrollView>
 
       <View style={styles.section2}>
         <Text style={styles.sectionTitle2}>Total</Text>
@@ -223,12 +264,12 @@ const styles = StyleSheet.create({
     color: '#E63946',
   },
   totalPrice1: {
-    fontSize: 15,
+    fontSize: 12,
     fontFamily: 'Outfit-Medium',
     color: '#E63946',
   },
   totalPrice2: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Outfit-Regular',
     color: 'black',
   },

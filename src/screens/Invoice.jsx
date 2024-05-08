@@ -14,7 +14,8 @@ import axios from 'axios';
 import {API_URL} from '../Constants/Helper';
 
 const InvoiceScreen = ({route, navigation}) => {
-  const {cartItems, total, totalDiscounted, dis} = route.params;
+  const {cartItems, total, totalDiscounted, dis, setCartItems, setTotal} =
+    route.params;
   const [discount, setDiscount] = useState(null);
   const [gst, setGst] = useState(null);
   const [delivery, setdelivery] = useState(null);
@@ -72,7 +73,9 @@ const InvoiceScreen = ({route, navigation}) => {
           ...item,
           product: item._id,
         }));
-
+        await AsyncStorage.removeItem('cartItems');
+        setCartItems([]);
+        setTotal(0);
         await AsyncStorage.setItem(
           'orderDetails',
           JSON.stringify({
@@ -112,9 +115,11 @@ const InvoiceScreen = ({route, navigation}) => {
           cartItems: cartItems,
           total: totalRounded,
           deliveryaddress: selectedAddress,
-          gst,
-          discount,
+          gst: totalgst,
+          discount: discountedAmount,
           deliverycharges: DeliveryCharges,
+          setCartItems: setCartItems,
+          setTotal: setTotal,
         });
       }
     } catch (error) {
@@ -162,10 +167,6 @@ const InvoiceScreen = ({route, navigation}) => {
     <>
       <ScrollView style={{backgroundColor: 'white'}}>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>Sherin Huts</Text>
-            <Text style={styles.headerSubtitle}>@sherinHuts</Text>
-          </View>
           <ScrollView style={{height: 360}}>
             {cartItems.map((item, index) => (
               <View key={index} style={styles.itemContainer}>
