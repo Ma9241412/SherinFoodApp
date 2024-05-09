@@ -28,22 +28,30 @@ const GoogleMaps = ({navigation}) => {
   const [addressSelected, setAddressSelected] = useState(false);
   const [pathCoordinates, setPathCoordinates] = useState([]);
 
+  useEffect(() => {
+    // Load previously saved address details
+    const loadSavedAddress = async () => {
+      try {
+        const savedAddress = await AsyncStorage.getItem('selectedAddress');
+        if (savedAddress) {
+          const addressData = JSON.parse(savedAddress);
+          setSearchAddress(addressData.address);
+          setDistance(addressData.distance);
+          setAddressSelected(true);
+        }
+      } catch (error) {
+        console.error('Error retrieving data from local storage', error);
+      }
+    };
+
+    loadSavedAddress();
+  }, []);
+
   const onMarkerDragEnd = e => {
     const newPosition = e.nativeEvent.coordinate;
     setMarkerPosition(newPosition);
     setRegion(newPosition);
-    calculateAndStoreDistance(newPosition);
   };
-
-  useEffect(() => {
-    if (searchAddress === '') {
-      setRegion(originRegion);
-      setMarkerPosition(originRegion);
-      setPathCoordinates([]);
-    } else {
-      fetchSuggestions(searchAddress);
-    }
-  }, [searchAddress]);
 
   const fetchSuggestions = async query => {
     const apiKey = 'AIzaSyAo1viD-Ut0TzXTyihevwuf-9tv_J3dPa0';
@@ -62,67 +70,82 @@ const GoogleMaps = ({navigation}) => {
     }
   };
 
-  const calculateRegion = (point1, point2) => {
-    const latitude = (point1.latitude + point2.latitude) / 2;
-    const longitude = (point1.longitude + point2.longitude) / 2;
-
-    const latitudeDelta = Math.abs(point1.latitude - point2.latitude) * 2;
-    const longitudeDelta = Math.abs(point1.longitude - point2.longitude) * 2;
-
-    return {
-      latitude,
-      longitude,
-      latitudeDelta,
-      longitudeDelta,
-    };
-  };
-
   const handleSelectSuggestion = async suggestion => {
+    const apiKey = 'AIzaSyAo1viD-Ut0TzXTyihevwuf-9tv_J3dPa0';
+
     const placesUrl = `https://maps.googleapis.com/maps/api/place/details/json`;
     try {
       const detailsResponse = await axios.get(placesUrl, {
         params: {
           place_id: suggestion.place_id,
-          key: 'AIzaSyAo1viD-Ut0TzXTyihevwuf-9tv_J3dPa0',
+          key: apiKey,
         },
       });
       const location = detailsResponse.data.result.geometry.location;
-      const newRegion = calculateRegion(originRegion, {
-        latitude: location.lat,
-        longitude: location.lng,
-      });
 
-      setRegion(newRegion);
-      setSearchAddress(suggestion.description);
-      setAddressSelected(true);
-      setSuggestions([]);
-      setPathCoordinates([
+      const distance = await fetchDirections(
         {latitude: originRegion.latitude, longitude: originRegion.longitude},
         {latitude: location.lat, longitude: location.lng},
-      ]);
-      calculateAndStoreDistance(newRegion);
+        suggestion.description,
+      );
+
+      if (distance) {
+        setSearchAddress(suggestion.description);
+        setAddressSelected(true);
+        setSuggestions([]);
+        setPathCoordinates([
+          {latitude: originRegion.latitude, longitude: originRegion.longitude},
+          {latitude: location.lat, longitude: location.lng},
+        ]);
+        saveData(
+          {lat: location.lat, lng: location.lng},
+          distance,
+          suggestion.description,
+        );
+      }
     } catch (error) {
       console.error('Error fetching place details', error);
     }
   };
 
-  const calculateAndStoreDistance = newRegion => {
-    const dist = getDistanceFromLatLonInKm(
-      region.latitude,
-      region.longitude,
-      newRegion.latitude,
-      newRegion.longitude,
-    );
-    setDistance(dist);
-    saveData(newRegion, dist);
+  useEffect(() => {
+    if (searchAddress === '') {
+      setRegion(originRegion);
+      setMarkerPosition(originRegion);
+      setPathCoordinates([]);
+      setAddressSelected(false);
+    } else {
+      fetchSuggestions(searchAddress);
+    }
+  }, [searchAddress]);
+
+  const fetchDirections = async (origin, destination, searchAddress) => {
+    let o = origin.latitude + ',' + origin.longitude;
+    let d = destination.latitude + ',' + destination.longitude;
+
+    const apiKey = 'AIzaSyAo1viD-Ut0TzXTyihevwuf-9tv_J3dPa0';
+    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${o}&destination=${d}&key=${apiKey}`;
+
+    try {
+      const response = await axios.get(url);
+      if (response.data.routes.length > 0) {
+        const distanceInMeters = response.data.routes[0].legs[0].distance.value;
+        const distanceInKm = distanceInMeters / 1000;
+        setDistance(distanceInKm);
+        return distanceInKm;
+      }
+    } catch (error) {
+      console.error('Error fetching directions:', error);
+    }
+    return null;
   };
 
-  const saveData = async (newRegion, dist) => {
+  const saveData = async (destination, distanceInKm, searchAddress) => {
     try {
       const jsonData = JSON.stringify({
         address: searchAddress,
-        distance: dist,
-        coordinates: newRegion,
+        distance: distanceInKm,
+        coordinates: destination,
       });
       console.log('Saving to AsyncStorage:', jsonData);
       await AsyncStorage.setItem('selectedAddress', jsonData);
@@ -158,13 +181,20 @@ const GoogleMaps = ({navigation}) => {
           draggable
         />
         {pathCoordinates.length > 0 && (
-          <Polyline
-            coordinates={pathCoordinates}
-            strokeColor="#FF0000"
-            strokeWidth={6}
-          />
+          <>
+            <Polyline
+              coordinates={pathCoordinates}
+              strokeColor="#4285F4"
+              strokeWidth={7}
+              tappable={true}
+              onPress={() => console.log('Route clicked')}
+            />
+
+            <Marker coordinate={pathCoordinates[pathCoordinates.length - 1]} />
+          </>
         )}
       </MapView>
+
       <View
         style={{
           backgroundColor: 'white',
@@ -172,7 +202,7 @@ const GoogleMaps = ({navigation}) => {
           paddingVertical: 20,
         }}>
         {searchAddress && <Text>{`Address: ${searchAddress}`}</Text>}
-        {distance && <Text>{`Distance: ${distance.toFixed(2)} km`}</Text>}
+        {distance && <Text>{`Distance: ${distance} km`}</Text>}
         <TouchableOpacity
           style={[styles.Button, !addressSelected && styles.disabledButton]}
           onPress={() => {
